@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oxibot — Assistente do Representante</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20128%20128%22%3E%0A%3Ccircle%20cx%3D%2264%22%20cy%3D%2264%22%20r%3D%2264%22%20fill%3D%22%231f6f78%22/%3E%0A%3Crect%20x%3D%2260%22%20y%3D%2228%22%20width%3D%228%22%20height%3D%2218%22%20rx%3D%224%22%20fill%3D%22%23e8f0f1%22/%3E%0A%3Ccircle%20cx%3D%2264%22%20cy%3D%2224%22%20r%3D%227%22%20fill%3D%22%23e08e45%22/%3E%0A%3Crect%20x%3D%2232%22%20y%3D%2246%22%20width%3D%2264%22%20height%3D%2250%22%20rx%3D%2216%22%20fill%3D%22%23ffffff%22/%3E%0A%3Ccircle%20cx%3D%2252%22%20cy%3D%2271%22%20r%3D%228%22%20fill%3D%22%231f6f78%22/%3E%0A%3Ccircle%20cx%3D%2276%22%20cy%3D%2271%22%20r%3D%228%22%20fill%3D%22%23e08e45%22/%3E%0A%3Crect%20x%3D%2246%22%20y%3D%2288%22%20width%3D%2236%22%20height%3D%227%22%20rx%3D%223.5%22%20fill%3D%22%231f6f78%22%20opacity%3D%220.55%22/%3E%0A%3Crect%20x%3D%2220%22%20y%3D%2260%22%20width%3D%2210%22%20height%3D%2222%22%20rx%3D%225%22%20fill%3D%22%23154e55%22/%3E%0A%3Crect%20x%3D%2298%22%20y%3D%2260%22%20width%3D%2210%22%20height%3D%2222%22%20rx%3D%225%22%20fill%3D%22%23154e55%22/%3E%0A%3C/svg%3E">
+<style>
+  :root{
+    --bg:#f0ede6;
+    --card:#ffffff;
+    --primary:#1f6f78;
+    --primary-dark:#154e55;
+    --accent-soft:#e7f0f1;
+    --warm:#e08e45;
+    --warm-dark:#c4762f;
+    --warm-soft:#fbeee0;
+    --bot-bubble:#f2f5f5;
+    --text:#22282c;
+    --text-soft:#6b7680;
+    --border:#e8e4dc;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    display:flex;
+    justify-content:center;
+    padding:0;
+  }
+  .card{
+    width:100%;
+    max-width:none;
+    height:100vh;
+    max-height:none;
+    background:var(--card);
+    border-radius:0;
+    box-shadow:none;
+    display:flex;
+    overflow:hidden;
+  }
+
+  /* ===== Sidebar ===== */
+  .sidebar{
+    width:200px;
+    flex-shrink:0;
+    background:var(--primary-dark);
+    color:#fff;
+    display:flex;
+    flex-direction:column;
+    padding:22px 0;
+  }
+  .sidebar-brand{
+    padding:0 18px 18px;
+    border-bottom:1px solid rgba(255,255,255,.12);
+    margin-bottom:14px;
+  }
+  .sidebar-brand img{
+    width:52px;height:52px;border-radius:50%;
+    display:block; margin-bottom:10px;
+    border:2px solid rgba(255,255,255,.35);
+  }
+  .sidebar-brand .name{font-size:.95rem; font-weight:700;}
+  .sidebar-brand .role{font-size:.72rem; color:#bcd8da; margin-top:2px;}
+  .sidebar h2{
+    font-size:.68rem;
+    text-transform:uppercase;
+    letter-spacing:.07em;
+    color:#8fb9bc;
+    margin:6px 18px 8px;
+    font-weight:700;
+  }
+  .sidebar-list{
+    overflow-y:auto;
+    flex:1;
+    padding:0 10px;
+  }
+  .side-btn{
+    display:block;
+    width:100%;
+    text-align:left;
+    background:none;
+    border:none;
+    color:#e4f0f1;
+    padding:9px 10px;
+    border-radius:9px;
+    font-size:.79rem;
+    cursor:pointer;
+    margin-bottom:2px;
+    line-height:1.3;
+  }
+  .side-btn:hover{background:rgba(255,255,255,.1);}
+
+  @media (max-width:640px){
+    .sidebar{
+      position:fixed;
+      left:0; top:0; bottom:0;
+      z-index:20;
+      transform:translateX(-100%);
+      transition:transform .25s ease;
+      box-shadow:10px 0 30px rgba(0,0,0,.2);
+    }
+    .sidebar.open{transform:translateX(0);}
+    .card{max-width:100%; height:100vh; max-height:none; border-radius:0;}
+    body{padding:0;}
+  }
+
+  /* ===== Chat column ===== */
+  .chat-col{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    min-width:0;
+  }
+  header{
+    background:var(--primary);
+    color:#fff;
+    padding:14px 18px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+  }
+  .menu-btn{
+    display:none;
+    background:rgba(255,255,255,.16);
+    border:none;
+    color:#fff;
+    width:34px;height:34px;
+    border-radius:9px;
+    font-size:1rem;
+    cursor:pointer;
+    flex-shrink:0;
+  }
+  @media (max-width:640px){ .menu-btn{display:block;} }
+  .avatar-img{
+    width:42px;height:42px;
+    border-radius:50%;
+    border:2px solid rgba(255,255,255,.5);
+    flex-shrink:0;
+  }
+  .header-text{flex:1; min-width:0;}
+  header h1{margin:0; font-size:1rem; font-weight:700;}
+  .status{
+    display:flex;align-items:center;gap:6px;
+    font-size:.75rem;
+    color:#d3ecee;
+    margin-top:2px;
+  }
+  .status .dot{width:7px;height:7px;border-radius:50%; background:#6be3a3; display:inline-block;}
+
+  .messages{
+    flex:1;
+    overflow-y:auto;
+    padding:20px 20px 8px;
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+    background:
+      radial-gradient(circle at 15% 0%, #f7fbfb 0%, var(--bg) 55%);
+  }
+  .row{display:flex; align-items:flex-end; gap:8px; margin:7px 0;}
+  .row.user{justify-content:flex-end;}
+  .row .mini-avatar{
+    width:28px;height:28px;
+    border-radius:50%;
+    flex-shrink:0;
+    border:1.5px solid #fff;
+    box-shadow:0 1px 3px rgba(0,0,0,.15);
+  }
+  .row.miss .mini-avatar{filter:saturate(.5);}
+  .bubble-wrap{display:flex; flex-direction:column; max-width:76%;}
+  .row.user .bubble-wrap{align-items:flex-end;}
+  .bubble{
+    padding:12px 15px;
+    border-radius:17px;
+    font-size:.91rem;
+    line-height:1.55;
+  }
+  .row.bot .bubble{background:var(--bot-bubble); border-bottom-left-radius:5px;}
+  .row.miss .bubble{background:#fbeeec; color:#7a3a30; border-bottom-left-radius:5px;}
+  .row.user .bubble{background:var(--warm); color:#fff; border-bottom-right-radius:5px;}
+  .timestamp{font-size:.68rem; color:var(--text-soft); margin-top:4px; padding:0 4px;}
+
+  .bubble h3{margin:0 0 6px; font-size:.95rem; color:var(--primary-dark);}
+  .bubble ol, .bubble ul{margin:6px 0; padding-left:20px;}
+  .bubble .note{
+    margin-top:8px; padding:8px 10px;
+    background:var(--warm-soft); color:var(--warm-dark);
+    border-radius:8px; font-size:.82rem;
+  }
+  .bubble .rephrase-tag{
+    display:inline-block; font-size:.72rem; font-weight:700;
+    color:var(--primary); background:var(--accent-soft);
+    padding:2px 9px; border-radius:20px; margin-bottom:8px;
+  }
+  .typing-row .bubble{display:flex; gap:4px; align-items:center; padding:12px 16px;}
+  .typing-dot{width:6px;height:6px;border-radius:50%; background:var(--text-soft); animation:blink 1.2s infinite ease-in-out;}
+  .typing-dot:nth-child(2){animation-delay:.2s;}
+  .typing-dot:nth-child(3){animation-delay:.4s;}
+  @keyframes blink{0%,80%,100%{opacity:.25;} 40%{opacity:1;}}
+
+  form{
+    display:flex; gap:8px;
+    padding:14px 18px;
+    border-top:1px solid var(--border);
+    background:var(--card);
+  }
+  input[type=text]{
+    flex:1; border:1px solid var(--border); background:var(--bg);
+    border-radius:22px; padding:11px 16px; font-size:.9rem; outline:none;
+  }
+  input[type=text]:focus{border-color:var(--warm);}
+  button.send{
+    width:42px; height:42px; background:var(--warm); color:#fff;
+    border:none; border-radius:50%; font-size:1.05rem; cursor:pointer; flex-shrink:0;
+  }
+  button.send:hover{background:var(--warm-dark);}
+
+  .overlay{
+    display:none;
+    position:fixed; inset:0; background:rgba(0,0,0,.35); z-index:15;
+  }
+  .overlay.show{display:block;}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="overlay" id="overlay"></div>
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <img src="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20128%20128%22%3E%0A%3Ccircle%20cx%3D%2264%22%20cy%3D%2264%22%20r%3D%2264%22%20fill%3D%22%231f6f78%22/%3E%0A%3Crect%20x%3D%2260%22%20y%3D%2228%22%20width%3D%228%22%20height%3D%2218%22%20rx%3D%224%22%20fill%3D%22%23e8f0f1%22/%3E%0A%3Ccircle%20cx%3D%2264%22%20cy%3D%2224%22%20r%3D%227%22%20fill%3D%22%23e08e45%22/%3E%0A%3Crect%20x%3D%2232%22%20y%3D%2246%22%20width%3D%2264%22%20height%3D%2250%22%20rx%3D%2216%22%20fill%3D%22%23ffffff%22/%3E%0A%3Ccircle%20cx%3D%2252%22%20cy%3D%2271%22%20r%3D%228%22%20fill%3D%22%231f6f78%22/%3E%0A%3Ccircle%20cx%3D%2276%22%20cy%3D%2271%22%20r%3D%228%22%20fill%3D%22%23e08e45%22/%3E%0A%3Crect%20x%3D%2246%22%20y%3D%2288%22%20width%3D%2236%22%20height%3D%227%22%20rx%3D%223.5%22%20fill%3D%22%231f6f78%22%20opacity%3D%220.55%22/%3E%0A%3Crect%20x%3D%2220%22%20y%3D%2260%22%20width%3D%2210%22%20height%3D%2222%22%20rx%3D%225%22%20fill%3D%22%23154e55%22/%3E%0A%3Crect%20x%3D%2298%22%20y%3D%2260%22%20width%3D%2210%22%20height%3D%2222%22%20rx%3D%225%22%20fill%3D%22%23154e55%22/%3E%0A%3C/svg%3E" alt="Oxibot">
+      <div class="name">Oxibot</div>
+      <div class="role">Assistente do Representante</div>
+    </div>
+    <h2>Solicitações</h2>
+    <div class="sidebar-list" id="topicsInner"></div>
+  </aside>
+
+  <div class="chat-col">
+    <header>
+      <button class="menu-btn" id="menuBtn" type="button">☰</button>
+      <img class="avatar-img" src="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20128%20128%22%3E%0A%3Ccircle%20cx%3D%2264%22%20cy%3D%2264%22%20r%3D%2264%22%20fill%3D%22%231f6f78%22/%3E%0A%3Crect%20x%3D%2260%22%20y%3D%2228%22%20width%3D%228%22%20height%3D%2218%22%20rx%3D%224%22%20fill%3D%22%23e8f0f1%22/%3E%0A%3Ccircle%20cx%3D%2264%22%20cy%3D%2224%22%20r%3D%227%22%20fill%3D%22%23e08e45%22/%3E%0A%3Crect%20x%3D%2232%22%20y%3D%2246%22%20width%3D%2264%22%20height%3D%2250%22%20rx%3D%2216%22%20fill%3D%22%23ffffff%22/%3E%0A%3Ccircle%20cx%3D%2252%22%20cy%3D%2271%22%20r%3D%228%22%20fill%3D%22%231f6f78%22/%3E%0A%3Ccircle%20cx%3D%2276%22%20cy%3D%2271%22%20r%3D%228%22%20fill%3D%22%23e08e45%22/%3E%0A%3Crect%20x%3D%2246%22%20y%3D%2288%22%20width%3D%2236%22%20height%3D%227%22%20rx%3D%223.5%22%20fill%3D%22%231f6f78%22%20opacity%3D%220.55%22/%3E%0A%3Crect%20x%3D%2220%22%20y%3D%2260%22%20width%3D%2210%22%20height%3D%2222%22%20rx%3D%225%22%20fill%3D%22%23154e55%22/%3E%0A%3Crect%20x%3D%2298%22%20y%3D%2260%22%20width%3D%2210%22%20height%3D%2222%22%20rx%3D%225%22%20fill%3D%22%23154e55%22/%3E%0A%3C/svg%3E" alt="Oxibot">
+      <div class="header-text">
+        <h1>Oxibot</h1>
+        <div class="status"><span class="dot"></span> Online agora · aqui pra te ajudar</div>
+      </div>
+    </header>
+
+    <div class="messages" id="messages"></div>
+
+    <form id="form">
+      <input type="text" id="input" placeholder="Digite sua dúvida..." autocomplete="off">
+      <button class="send" type="submit" aria-label="Enviar">➤</button>
+    </form>
+  </div>
+</div>
+
+<script>
+/* =========================================================================
+   BASE DE CONHECIMENTO — REPRESENTANTES
+   -------------------------------------------------------------------------
+   Para adicionar uma nova solicitação, copie um bloco { ... } abaixo e edite:
+     id        -> identificador único, sem espaço (ex: "novo-processo")
+     title     -> título mostrado no menu lateral e na resposta
+     keywords  -> palavras/expressões que o representante pode digitar
+     html      -> resposta detalhada, em HTML (<ol>, <ul>, <b>, a classe
+                  "note" destaca avisos importantes)
+     simple    -> uma versão curta, em linguagem simples, usada quando a
+                  pessoa diz que não entendeu a explicação detalhada
+   Depois de editar, salve o arquivo e recarregue no navegador. Não precisa
+   de mais nada — não há servidor nem banco de dados externo.
+   ========================================================================= */
+const DOC_NOTE = 'Colete a assinatura do cliente, digitalize o documento, envie no grupo de digitalização da loja e anexe no Sankhya.';
+
+const KNOWLEDGE_BASE = [
+  {
+    id: "locacao",
+    title: "Locação",
+    category: "Solicitações e Documentos",
+    keywords: ["locacao","locação","alugar equipamento","contrato de locacao","contrato de locação",
+      "cpap locacao","cpap locação","alugar cpap"],
+    simple: "Resumindo: pra locação, você precisa do RG do cliente, comprovante de residência, comprovante de pagamento e foto do equipamento. Descreva os itens certinho no formulário (nome, quantidade, valor) e depois é só baixar o contrato na tela de Contratos e a remessa no Portal de Vendas, buscando pelo nome do cliente.",
+    html: `
+      <h3>Locação</h3>
+      <p><b>Documentos necessários:</b> documento de identidade do cliente, comprovante de residência, comprovante de pagamento e uma foto legível do equipamento a ser locado.</p>
+      <h3>Como descrever os itens no formulário</h3>
+      <p>Descreva os itens por completo, seguindo este modelo:</p>
+      <ul>
+        <li>ATIVO – CPAP DreamStation Auto – 1 un – R$ 1.050,00</li>
+        <li>ATIVO – Umidificador DreamStation – 1 un – R$ 0,00</li>
+        <li>ATIVO – Modem DreamStation – 1 un – R$ 0,00</li>
+      </ul>
+      <p>Exemplos de número de série:</p>
+      <ul>
+        <li>J373025344ADF</li>
+        <li>H3730331428F7</li>
+        <li>CT7385584DE4E</li>
+      </ul>
+      <div class="note">Se o número de série do equipamento incluir um Device Number (DN), esse dado também deve constar na descrição do equipamento.</div>
+      <h3>Depois do envio do formulário</h3>
+      <p>O setor de solicitações emitirá o contrato e a remessa.</p>
+      <ul>
+        <li><b>Para baixar o contrato:</b> na tela de Contratos, digite o nome do cliente, clique em Aplicar e, na seta ao lado da lupa de pesquisa, selecione "Contrato de Locação Fidelização".</li>
+        <li><b>Para encontrar a remessa:</b> no Portal de Vendas, digite o nome do cliente no campo Parceiro.</li>
+      </ul>
+      <div class="note">${DOC_NOTE}</div>
+    `
+  },
+  {
+    id: "venda-produto",
+    title: "Venda de Produto",
+    category: "Solicitações e Documentos",
+    keywords: ["venda de produto","vender produto","vender item","vender acessorio","vender acessório",
+      "venda de acessorio","venda de acessório"],
+    simple: "Resumindo: só precisa do comprovante de pagamento e foto do item vendido. A nota de venda você encontra no Portal de Vendas, buscando pelo nome do cliente.",
+    html: `
+      <h3>Venda de Produto</h3>
+      <p><b>Documentos necessários:</b> comprovante de pagamento e foto do(s) item(ns) vendido(s).</p>
+      <h3>Como descrever os itens no formulário</h3>
+      <ul>
+        <li>Cateter Nasal – 1 un – R$ 35,00</li>
+        <li>Copo Umidificador – 2 un – R$ 35,00</li>
+      </ul>
+      <p>Para encontrar a nota de venda: no Portal de Vendas, digite o nome do cliente no campo Parceiro.</p>
+      <div class="note">${DOC_NOTE}</div>
+    `
+  },
+  {
+    id: "bonificacao-rep",
+    title: "Bonificação",
+    category: "Solicitações e Documentos",
+    keywords: ["bonificacao","bonificação","item bonificado","bonificar produto"],
+    simple: "Resumindo: descreva o motivo da bonificação e tire foto do item bonificado.",
+    html: `
+      <h3>Bonificação</h3>
+      <p><b>Documentos necessários:</b> motivo da bonificação e foto do(s) item(ns) bonificado(s).</p>
+      <div class="note">${DOC_NOTE}</div>
+    `
+  },
+  {
+    id: "renovacao-rep",
+    title: "Renovação",
+    category: "Solicitações e Documentos",
+    keywords: ["renovacao","renovação","renovacao simples","renovação simples","renovacao upgrade",
+      "renovação upgrade","upgrade de plano","fidelidade"],
+    simple: "Resumindo: só precisa do comprovante de pagamento. Se o cliente ficar no mesmo plano ou for pra um com fidelidade menor, é renovação simples; se for pra um plano com fidelidade maior, é upgrade. O contrato você baixa na tela de Contratos.",
+    html: `
+      <h3>Renovação</h3>
+      <p><b>Documento necessário:</b> comprovante de pagamento.</p>
+      <ul>
+        <li><b>Renovação simples:</b> o cliente permanece no mesmo plano ou migra para um plano com fidelidade menor.</li>
+        <li><b>Renovação upgrade:</b> o cliente migra para um plano com fidelidade maior.</li>
+      </ul>
+      <p>Para baixar o contrato: na tela de Contratos, digite o nome do cliente, clique em Aplicar e, na seta ao lado da lupa de pesquisa, selecione "Contrato de Locação Fidelização".</p>
+      <div class="note">${DOC_NOTE}</div>
+    `
+  },
+  {
+    id: "recolhimento",
+    title: "Recolhimento",
+    category: "Solicitações e Documentos",
+    keywords: ["recolhimento","recolher equipamento","retorno de remessa","ficha de recolhimento"],
+    simple: "Resumindo: tire foto do equipamento recolhido e descreva o motivo no formulário. A ficha de recolhimento fica no Portal de Vendas, no documento em vermelho \"Retorno de Remessa de Locação\".",
+    html: `
+      <h3>Recolhimento</h3>
+      <p><b>Documento necessário:</b> foto do equipamento recolhido. Descreva também o motivo do recolhimento no formulário.</p>
+      <p>Para baixar a ficha de recolhimento: no Portal de Vendas, digite o nome do cliente e clique em Aplicar. Localize o documento mais recente, destacado em vermelho, com o título "Retorno de Remessa de Locação", selecione-o e clique no ícone ao lado da impressora para gerar a "Ficha de Recolhimento".</p>
+      <div class="note">${DOC_NOTE}</div>
+    `
+  },
+  {
+    id: "venda-servico-ajuste-cpap",
+    title: "Ajuste de CPAP / Relatório",
+    category: "Solicitações e Documentos",
+    keywords: ["ajuste de cpap","relatorio","relatório","venda de servico","venda de serviço","servico tecnico",
+      "serviço técnico","emissao de relatorio","emissão de relatório"],
+    simple: "Resumindo: usado pra ajuste de CPAP ou emissão de relatório. Informe o tipo de serviço e o valor no formulário, junto com o comprovante de pagamento. A nota fica no Portal de Vendas.",
+    html: `
+      <h3>Venda de Serviço — Ajuste de CPAP ou Relatório</h3>
+      <p>Use essa opção sempre que for realizar um ajuste no equipamento do cliente ou emitir um relatório.</p>
+      <p>No formulário, informe o tipo de serviço e o valor. <b>Documento necessário:</b> comprovante de pagamento.</p>
+      <p>O setor de solicitações emitirá, no Portal de Vendas, um "Pedido de Venda Serviço" com o tipo de serviço, nome do cliente e valor. Para localizá-lo, acesse o Portal de Vendas e busque pelo nome do cliente.</p>
+      <div class="note">A coordenação também enviará, no seu privado, uma nota de serviço emitida pelo portal da Prefeitura.</div>
+      <div class="note">${DOC_NOTE}</div>
+    `
+  },
+  {
+    id: "venda-encomenda",
+    title: "Venda por Encomenda",
+    category: "Solicitações e Documentos",
+    keywords: ["venda por encomenda","retirada de equipamento","venda retirada","retirar equipamento"],
+    simple: "Resumindo: precisa do comprovante de pagamento e foto do equipamento retirado. A nota fica no Portal de Vendas.",
+    html: `
+      <h3>Venda por Encomenda — Venda/Retirada do Equipamento</h3>
+      <p><b>Documentos necessários:</b> foto do comprovante de pagamento e foto do equipamento que está sendo retirado.</p>
+      <p>Para extrair a nota de venda: acesse o Portal de Vendas, digite o nome do cliente e selecione a NF.</p>
+      <div class="note">${DOC_NOTE}</div>
+    `
+  },
+  {
+    id: "higienizacao-rep",
+    title: "Higienização",
+    category: "Solicitações e Documentos",
+    keywords: ["higienizacao","higienização","limpeza do equipamento"],
+    simple: "Resumindo: comprovante de pagamento e foto do equipamento a ser higienizado. A nota fica no Portal de Vendas.",
+    html: `
+      <h3>Higienização</h3>
+      <p><b>Documentos necessários:</b> foto do comprovante de pagamento e foto do equipamento que será higienizado.</p>
+      <p>A coordenação emitirá o "Pedido de Venda Serviço — Higienização". Para extrair essa nota: acesse o Portal de Vendas, digite o nome do cliente e selecione a NF.</p>
+      <div class="note">${DOC_NOTE}</div>
+    `
+  },
+  {
+    id: "troca-equipamento-locacao",
+    title: "Troca de Equipamento",
+    category: "Solicitações e Documentos",
+    keywords: ["troca de equipamento","troca de locacao","troca de locação","assistencia troca","trocar equipamento"],
+    simple: "Resumindo: foto dos dois equipamentos (o que sai e o que entra). Você imprime a nova remessa e a ficha de recolhimento do equipamento antigo.",
+    html: `
+      <h3>Troca de Equipamento de Locação — Assistência</h3>
+      <p><b>Documentos necessários:</b> foto dos dois equipamentos — o que está sendo trocado e o que ficará no lugar dele.</p>
+      <p>A coordenação emitirá a nova remessa e dará baixa na remessa do equipamento antigo. Você deverá imprimir a nova remessa e a ficha de recolhimento do equipamento antigo.</p>
+      <p>Para extrair a nota: acesse o Portal de Vendas, digite o nome do cliente e selecione a NF.</p>
+      <div class="note">${DOC_NOTE}</div>
+    `
+  },
+  {
+    id: "assistencia-garantia",
+    title: "Assistência (Garantia ou Não)",
+    category: "Solicitações e Documentos",
+    keywords: ["assistencia","assistência","garantia","equipamento em garantia","equipamento com defeito"],
+    simple: "Resumindo: só precisa de foto do equipamento. A coordenação cuida da inclusão no sistema.",
+    html: `
+      <h3>Assistência — Equipamento do Cliente em Garantia ou Não</h3>
+      <p><b>Documento necessário:</b> foto do equipamento.</p>
+      <p>A coordenação emitirá a nota de inclusão do equipamento no sistema e enviará no seu privado.</p>
+      <div class="note">${DOC_NOTE}</div>
+    `
+  },
+  {
+    id: "cancelamento-venda",
+    title: "Cancelamento de Venda",
+    category: "Solicitações e Documentos",
+    keywords: ["cancelamento","devolucao","devolução","cancelar venda","troca de venda"],
+    simple: "Resumindo: sempre precisa de autorização da supervisão antes de seguir com o cancelamento.",
+    html: `
+      <h3>Cancelamento de Venda — Devolução ou Troca</h3>
+      <p>Essa solicitação só pode ser realizada mediante autorização da supervisão. Entre em contato com o seu supervisor antes de dar andamento.</p>
+    `
+  },
+  {
+    id: "transferencias-rep",
+    title: "Transferências",
+    category: "Solicitações e Documentos",
+    keywords: ["transferencia","transferência","transferir equipamento"],
+    simple: "Resumindo: foto do equipamento e a nota fica no Portal de Movimentações Internas.",
+    html: `
+      <h3>Transferências</h3>
+      <p><b>Documento necessário:</b> foto do equipamento que será transferido.</p>
+      <p>A nota de transferência deve ser coletada no Portal de Movimentações Internas.</p>
+      <div class="note">${DOC_NOTE}</div>
+    `
+  },
+  {
+    id: "plano-acompanhamento",
+    title: "Plano de Acompanhamento",
+    category: "Solicitações e Documentos",
+    keywords: ["plano de acompanhamento","acompanhamento do cliente"],
+    simple: "Resumindo: contrato manual preenchido, com o comprovante de pagamento anexado no formulário.",
+    html: `
+      <h3>Plano de Acompanhamento</h3>
+      <p>É necessário preencher o contrato manual e anexar o comprovante de pagamento no formulário.</p>
+      <div class="note">${DOC_NOTE}</div>
+    `
+  },
+
+  /* ===================== FINANCEIRO ===================== */
+  {
+    id: "estorno",
+    title: "Estorno",
+    category: "Financeiro",
+    keywords: ["estorno","solicitar estorno","cancelamento de plano","multa de cancelamento",
+      "pagamento duplicado","cobranca indevida","cobrança indevida",
+      "codigo da maquininha","código da maquininha","codigo cielo","código cielo","codigo rede","código rede",
+      "codigo estabelecimento","código estabelecimento","nsu","doc aut","cod ec","laranjinha itau","laranjinha itaú"],
+    simple: "Resumindo: peça o estorno pelo formulário online, mas antes fale com a Flávia — principalmente se for cancelamento antes do prazo (tem multa de 30%) ou algum caso fora do padrão, como pagamento duplicado. Os códigos da maquininha (NSU, DOC, AUT, COD EC etc.) você tira direto da notinha, exatamente como está impresso.",
+    html: `
+      <h3>Estorno</h3>
+      <p><b>Como solicitar:</b> preencha o formulário online pelo link: <a href="https://forms.gle/mhVFoqCt2pmJdYyB8" target="_blank">forms.gle/mhVFoqCt2pmJdYyB8</a>. Leia com atenção a primeira página, que traz as instruções de preenchimento.</p>
+      <p>Depois de finalizar, avise a Flávia que o estorno foi solicitado.</p>
+      <h3>Quando solicitar</h3>
+      <p><b>Prazo:</b> 15 dias úteis.</p>
+      <p>Quando o cliente cancela um plano antes do prazo de encerramento, é calculada uma multa de 30% sobre o restante dos meses que deveriam ser pagos. Esse cálculo deve ser solicitado à Flávia antes de preencher o formulário.</p>
+      <h3>Casos atípicos</h3>
+      <p>Se for necessário solicitar um estorno fora do padrão — como pagamento duplicado feito pelo cliente ou cobrança da recorrência mesmo após o recolhimento do equipamento — comunique a Flávia antes de preencher o formulário.</p>
+      <h3>Onde encontrar os códigos da maquininha para o formulário</h3>
+      <p>Isso depende de como o pagamento foi feito:</p>
+      <ul>
+        <li><b>Pagamento direto na máquina física:</b> os dados estão na própria nota impressa.</li>
+        <li><b>Pagamento via link:</b> os dados estão no print de aprovação enviado pelo setor administrativo. Nesse caso, use o código de estabelecimento correspondente:</li>
+      </ul>
+      <ul>
+        <li>Oxigenar — CIELO: <b>2774942289</b></li>
+        <li>Pulmonair — CIELO: <b>2862659163</b></li>
+        <li>Oxigenar — REDE: <b>27543331</b></li>
+        <li>Pulmonair — REDE: <b>74234030</b></li>
+      </ul>
+      <p>Pra saber se é REDE ou CIELO, é só olhar a notinha: a <b>REDE</b> aparece como "Laranjinha Itaú", e a <b>CIELO</b> aparece com o próprio nome, "Cielo".</p>
+      <div class="note">Os códigos de NSU, DOC, AUT, COD EC e outros também precisam ser preenchidos exatamente como aparecem na notinha da maquininha, sem alterações.</div>
+      <p>Já nos casos de pagamento por recorrência, esses dados não vêm em notinha — peça direto pra alguém do ADM. Assim que receber, preencha os campos exatamente como o ADM te passou.</p>
+    `
+  },
+  {
+    id: "links-pagamento",
+    title: "Links de Pagamento",
+    category: "Financeiro",
+    keywords: ["link de pagamento","link de recorrencia","link de recorrência","solicitar link",
+      "cancelar recorrencia","cancelar recorrência","cancelamento de recorrencia","cancelamento de recorrência",
+      "codigo do link","código do link"],
+    simple: "Resumindo: tem dois tipos de link — pagamento único (venda ou locação) e recorrência (só para locação mensal). Peça no grupo do WhatsApp certo (Link - Oxigenar ou Link - Pulmonair) informando tipo, descrição, valor e parcelas.",
+    html: `
+      <h3>Links de Pagamento</h3>
+      <p>Existem dois tipos de link:</p>
+      <ul>
+        <li><b>Link de pagamento:</b> usado para pagamento único — pode ser para uma venda ou uma locação.</li>
+        <li><b>Link de recorrência:</b> usado para pagamento debitado mensalmente — deve ser usado apenas para locações mensais.</li>
+      </ul>
+      <h3>Como solicitar</h3>
+      <p>Faça o pedido no grupo do WhatsApp correspondente: <i>Link - Oxigenar</i> ou <i>Link - Pulmonair</i>, dependendo da empresa. A solicitação deve conter:</p>
+      <ul>
+        <li>Tipo de link (recorrência ou pagamento)</li>
+        <li>Descrição do produto</li>
+        <li>Valor</li>
+        <li>Número de parcelas (no caso de link de pagamento)</li>
+      </ul>
+      <div class="note">A aprovação do link sempre vem acompanhada de um código, que deve ser inserido na planilha da unidade.</div>
+      <h3>Pontos de atenção — recorrência</h3>
+      <p>Como o pagamento é automático, é preciso avisar o Setor Administrativo imediatamente no grupo de Link para cancelar a recorrência assim que o cliente devolver o equipamento em loja — isso evita um possível estorno. No momento da aplicação, avise também o cliente sobre esse detalhe, para que ele sinalize caso vá devolver com atraso, permitindo adiar a data da recorrência.</p>
+      <h3>Cancelamento de recorrência</h3>
+      <p>Envie no grupo de Link a ficha de recolhimento ou de renovação, comprovando que o cliente devolveu o equipamento ou renovou com outra forma de pagamento. O representante comercial deve acompanhar até receber a confirmação de cancelamento do Setor Administrativo.</p>
+    `
+  },
+  {
+    id: "planilha-resultado",
+    title: "Planilha de Resultado",
+    category: "Financeiro",
+    keywords: ["planilha de resultado","preenchimento da planilha","coluna j","coluna k",
+      "codigo de pagamento","código de pagamento","cv do comprovante"],
+    simple: "Resumindo: nome em MAIÚSCULAS igual ao sistema, data no formato DD/MM/AAAA, venda e locação lançadas separadas, e cada forma de pagamento (cartão, link, PIX) tem um jeito certo de preencher na coluna K.",
+    html: `
+      <h3>Preenchimento da Planilha de Resultado</h3>
+      <p>Para evitar divergências na conciliação dos pagamentos, siga obrigatoriamente o padrão abaixo:</p>
+      <ul>
+        <li><b>Nome:</b> nome completo, exatamente como está cadastrado no sistema, em LETRAS MAIÚSCULAS.</li>
+        <li><b>Data:</b> sempre no formato DD/MM/AAAA (ex.: 01/08/2026).</li>
+        <li><b>Valor:</b> deve corresponder exatamente ao valor do código de pagamento informado.</li>
+        <li><b>Venda e Locação:</b> devem ser recebidas e lançadas separadamente.</li>
+      </ul>
+      <h3>Preenchimento das colunas de pagamento</h3>
+      <ul>
+        <li><b>Coluna J:</b> selecione a forma de pagamento.</li>
+        <li><b>Coluna K:</b> informe o código referente ao pagamento, conforme abaixo:
+          <ul>
+            <li><b>Cartão (maquininha):</b> informe o CV que consta no comprovante.</li>
+            <li><b>Link de pagamento:</b> copie e cole o código enviado pelo Financeiro no grupo de Link, na aprovação.</li>
+            <li><b>PIX (chave ou maquininha):</b> informe somente o CPF do responsável pelo pagamento — apenas os números, sem pontuação.</li>
+          </ul>
+        </li>
+      </ul>
+    `
+  },
+
+  /* ===================== COMUNICAÇÃO INTERNA ===================== */
+  {
+    id: "grupos-whatsapp",
+    title: "Grupos do WhatsApp",
+    category: "Comunicação Interna",
+    keywords: ["grupos whatsapp","grupo whatsapp","grupo administrativo","qual grupo usar",
+      "grupo de link","grupo de avisos","central de solicitacoes","central de solicitações"],
+    simple: "Resumindo: cada grupo tem uma função específica — veja qual usar antes de mandar sua mensagem.",
+    html: `
+      <h3>Grupos Administrativos no WhatsApp</h3>
+      <ul>
+        <li><b>Oxigenar / Pulmonair (geral):</b> grupo geral da empresa.</li>
+        <li><b>Link:</b> para solicitar links de pagamento, aprovações e cancelamentos de recorrência.</li>
+        <li><b>Central de Solicitações:</b> controle das solicitações enviadas.</li>
+        <li><b>PIX:</b> confirmação de transferências bancárias, depósitos e PIX.</li>
+        <li><b>Inadimplência:</b> verificar inadimplência de clientes antes de recolher ou renovar.</li>
+        <li><b>PJs:</b> envio de todas as fichas manuais feitas para atendimentos de PJ em loja.</li>
+        <li><b>Avisos:</b> comunicações importantes.</li>
+        <li><b>Fichas:</b> solicitação de cadastro de clientes antigos da empresa.</li>
+      </ul>
+    `
+  },
+
+  /* ===================== RH ===================== */
+  {
+    id: "registro-ponto",
+    title: "Registro de Ponto Eletrônico",
+    category: "RH",
+    keywords: ["ponto eletronico","ponto eletrônico","registro de ponto","bater ponto",
+      "hora extra","autorizacao hora extra","autorização hora extra","intervalo de almoco","intervalo de almoço",
+      "tolerancia do ponto","tolerância do ponto"],
+    simple: "Resumindo: bata os 4 pontos do dia (entrada, saída pro almoço, volta do almoço, saída final), respeite a 1h de almoço, e peça autorização pra Karina (Pulmonair) ou Luiz Fernando (Oxigenar) se precisar ficar depois do horário com cliente em loja.",
+    html: `
+      <h3>Registro do Ponto Eletrônico</h3>
+      <p>É obrigatório realizar os 4 registros de ponto durante a jornada de trabalho:</p>
+      <ol>
+        <li>Entrada</li>
+        <li>Saída para almoço</li>
+        <li>Retorno do almoço</li>
+        <li>Saída ao final do expediente</li>
+      </ol>
+      <p>O intervalo de 1 hora de almoço é obrigatório e deve ser respeitado.</p>
+      <h3>Permanência após o horário</h3>
+      <p>Só é permitido permanecer na loja além do horário quando houver cliente em atendimento. Nesses casos, é obrigatório enviar a solicitação de autorização para:</p>
+      <ul>
+        <li>Karina (Pulmonair)</li>
+        <li>Luiz Fernando (Oxigenar)</li>
+      </ul>
+      <p>Use o modelo abaixo:</p>
+      <div class="note">
+        🕣 AUTORIZAÇÃO HORA EXTRA/AJUSTE HORA<br>
+        Data: 23/06/2026<br>
+        Horário: 18:00<br>
+        Motivo: Cliente em loja
+      </div>
+      <p>Existe uma tolerância de 10 minutos para o registro do ponto, mas ela serve apenas como margem para imprevistos — não é uma regra fixa.</p>
+    `
+  },
+
+  /* ===================== PRODUTOS E FORNECEDORES ===================== */
+  {
+    id: "white-martins-oxigenar",
+    title: "White Martins — Oxigenar",
+    category: "Produtos e Fornecedores",
+    keywords: ["white martins","cilindro de oxigenio","cilindro de oxigênio","concentrador oxigenar",
+      "oxigenio domiciliar","oxigênio domiciliar","cilindro backup"],
+    simple: "Resumindo: em residência com escada, loca cilindro de 3,5 m³ (2 cilindros se precisar); sem concentrador da Oxigenar, sempre 2 cilindros (1 de backup); prazo de entrega é até 72h úteis; qualquer atendimento fora do padrão precisa de autorização da Vanessa.",
+    html: `
+      <h3>Solicitações White Martins — Oxigenar</h3>
+      <ul>
+        <li><b>Residência com escadas:</b> locar cilindro de 3,5 m³. Se necessário, locar 2 cilindros (2 locações + 2 cargas).</li>
+        <li><b>Sem concentrador da Oxigenar:</b> locar 2 cilindros — 2 locações + 2 cargas (o segundo cilindro é o backup).</li>
+        <li><b>Prazo de entrega:</b> informar sempre até 72h úteis.</li>
+        <li><b>Orientações:</b> enviar ao cliente as instruções de uso (PDF).</li>
+        <li><b>Entrega:</b> orientar o cliente a conferir se o cilindro está cheio no recebimento.</li>
+      </ul>
+      <div class="note">Qualquer atendimento fora do padrão precisa de autorização da Vanessa antes de prosseguir. Sempre que um atendimento fora do comum for autorizado, registre isso em Observação no pedido.</div>
+      <p><b>Dúvidas:</b> Vanessa, Bianca ou Vicent.</p>
+    `
+  },
+  {
+    id: "assistencia-tecnica-reserva",
+    title: "Assistência Técnica e Equipamento Reserva",
+    category: "Produtos e Fornecedores",
+    keywords: ["assistencia tecnica","assistência técnica","equipamento reserva","garantia do equipamento",
+      "frete assistencia tecnica","frete assistência técnica","equipamento de terceiro"],
+    simple: "Resumindo: equipamento comprado na Oxigenar e ainda na garantia tem reserva grátis; fora da garantia ou comprado de terceiros, a locação do reserva custa R$ 250. O frete só é cobrado se o cliente não aprovar o orçamento do conserto.",
+    html: `
+      <h3>Assistência Técnica e Equipamento Reserva</h3>
+      <h3>Equipamentos adquiridos com a Oxigenar</h3>
+      <ul>
+        <li><b>Durante a garantia:</b> a Oxigenar disponibiliza um equipamento reserva sem custo durante todo o período do reparo.</li>
+        <li><b>Após o término da garantia:</b> o equipamento pode ser encaminhado para assistência técnica, mas o cliente não tem direito ao empréstimo do reserva. Se precisar de um equipamento nesse período, é possível alugar por R$ 250,00.</li>
+      </ul>
+      <h3>Equipamentos adquiridos de terceiros</h3>
+      <p>Mesmo dentro do período de garantia, a Oxigenar não disponibiliza equipamento reserva para empréstimo. Se o cliente precisar de um equipamento enquanto o seu está em assistência técnica, pode alugá-lo por R$ 250,00.</p>
+      <h3>Frete para assistência técnica</h3>
+      <p>O frete de envio e devolução só é cobrado caso o cliente não aprove o orçamento do conserto. Se o orçamento for aprovado, os custos de frete ficam integralmente por conta da Oxigenar/Pulmonair, sem cobrança adicional ao cliente.</p>
+    `
+  },
+  {
+    id: "transferencia-pulmonair-oxigenar",
+    title: "Transferência Pulmonair ↔ Oxigenar",
+    category: "Produtos e Fornecedores",
+    keywords: ["transferencia entre empresas","transferência entre empresas","produto pulmonair oxigenar",
+      "venda pulmonair oxigenar","transferencia de estoque","transferência de estoque"],
+    simple: "Resumindo: toda venda ou transferência de produto da Pulmonair pela Oxigenar (ou vice-versa) precisa ser comunicada ao Anderson antes, já que ele é o responsável pelo estoque e cuida do trâmite correto.",
+    html: `
+      <h3>Produtos da Pulmonair para a Oxigenar (e vice-versa)</h3>
+      <p>Sempre que houver necessidade de realizar a venda ou transferência de um produto da Pulmonair pela Oxigenar, é obrigatório comunicar imediatamente o Anderson, para que ele execute os trâmites corretos.</p>
+      <div class="note">A transferência ou envio de equipamentos entre a Pulmonair e a Oxigenar, ou vice-versa, deve ser realizada exclusivamente pelo responsável pelo estoque (Anderson — Oxigenar Estoque).</div>
+      <p>Transferências realizadas fora desse processo têm gerado problemas e prejuízos financeiros para a empresa — por isso, siga sempre esse fluxo.</p>
+    `
+  }
+];
+
+/* ========================= DETECÇÃO DE INTENÇÃO ========================= */
+const CONFUSION_PATTERNS = [
+  "nao entendi","não entendi","nao entendo","não entendo","nao ficou claro","não ficou claro",
+  "explica de outro jeito","explica diferente","de outra forma","mais simples","nao captei",
+  "não captei","confuso","complicado","nao saquei","não saquei","resume","resumindo",
+  "pode simplificar","fica dificil","fica difícil","nao entendi nada","não entendi nada"
+];
+const GREETING_PATTERNS = ["oi","ola","olá","bom dia","boa tarde","boa noite","opa","eae","e ai","e aí"];
+const THANKS_PATTERNS = ["obrigado","obrigada","valeu","vlw","top obrigado","ajudou","show"];
+const ONLY_THIS_PATTERNS = ["so isso","só isso","e so isso","é só isso","isso mesmo","so isso mesmo",
+  "só isso mesmo","é isso","e isso","era so isso","era só isso","nada mais","so isso ai","só isso aí"];
+
+/* Variações de resposta, pra soar mais natural e menos repetitivo */
+const GREETING_REPLIES = [
+  "Oi! Eu sou o Oxibot 🤖 Pode perguntar sobre documentos e passo a passo de qualquer solicitação — locação, venda, recolhimento, higienização e outras.",
+  "Olá! Fico por aqui pra ajudar com as solicitações do dia a dia. Pode perguntar à vontade.",
+  "Oi, tudo bem? Me conta qual solicitação você está fazendo que eu te explico os documentos e o passo a passo."
+];
+const THANKS_REPLIES = [
+  "Disponha! Qualquer outra dúvida, é só chamar.",
+  "Fico feliz em ajudar! Se precisar de mais alguma coisa, estou por aqui.",
+  "Por nada! Sempre que precisar, é só perguntar."
+];
+const ONLY_THIS_REPLIES = [
+  "Sim, é isso mesmo! 😊 Posso ajudar com mais alguma coisa?",
+  "Isso aí, era só isso mesmo! Precisa de algo mais?",
+  "Exatamente! Se surgir outra dúvida, é só chamar."
+];
+const MISS_INTROS = [
+  "Ainda não tenho essa informação na minha base 🙁",
+  "Essa eu ainda não sei responder 🙁",
+  "Hmm, essa solicitação ainda não está cadastrada comigo 🙁"
+];
+
+function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+function normalize(str){
+  return str.toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+    .replace(/[^a-z0-9\s]/g," ")
+    .replace(/\s+/g," ").trim();
+}
+function matchesAny(qNorm, list){
+  return list.some(p => qNorm.includes(normalize(p)));
+}
+function scoreEntry(entry, queryNorm){
+  let score = 0;
+  for(const kw of entry.keywords){
+    const kwNorm = normalize(kw);
+    if(!kwNorm) continue;
+    if(queryNorm.includes(kwNorm)){
+      score += kwNorm.split(" ").length * 3;
+    } else {
+      const words = kwNorm.split(" ");
+      const hits = words.filter(w => w.length > 2 && queryNorm.includes(w)).length;
+      score += hits;
+    }
+  }
+  const titleNorm = normalize(entry.title);
+  titleNorm.split(" ").forEach(w=>{ if(w.length>3 && queryNorm.includes(w)) score += 1; });
+  return score;
+}
+function findAnswer(query){
+  const qNorm = normalize(query);
+  let best = null, bestScore = 0;
+  for(const entry of KNOWLEDGE_BASE){
+    const s = scoreEntry(entry, qNorm);
+    if(s > bestScore){ bestScore = s; best = entry; }
+  }
+  return bestScore >= 2 ? best : null;
+}
+
+/* ========================= ESTADO ========================= */
+let lastEntry = null;
+const AVATAR_DATA = document.querySelector(".avatar-img").src;
+
+/* ========================= INTERFACE ========================= */
+const messagesEl = document.getElementById("messages");
+const formEl = document.getElementById("form");
+const inputEl = document.getElementById("input");
+const topicsInner = document.getElementById("topicsInner");
+const sidebar = document.getElementById("sidebar");
+const overlay = document.getElementById("overlay");
+const menuBtn = document.getElementById("menuBtn");
+
+menuBtn.addEventListener("click", ()=>{ sidebar.classList.add("open"); overlay.classList.add("show"); });
+overlay.addEventListener("click", ()=>{ sidebar.classList.remove("open"); overlay.classList.remove("show"); });
+
+function renderTopics(){
+  const categories = new Map();
+  KNOWLEDGE_BASE.forEach(entry=>{
+    const cat = entry.category || "Solicitações e Documentos";
+    if(!categories.has(cat)) categories.set(cat, []);
+    categories.get(cat).push(entry);
+  });
+
+  categories.forEach((entries, cat)=>{
+    const h = document.createElement("h2");
+    h.textContent = cat;
+    topicsInner.appendChild(h);
+
+    entries.forEach(entry=>{
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "side-btn";
+      b.textContent = entry.title;
+      b.onclick = ()=>{ sidebar.classList.remove("open"); overlay.classList.remove("show"); ask(entry.title); };
+      topicsInner.appendChild(b);
+    });
+  });
+}
+renderTopics();
+
+function scrollDown(){ messagesEl.scrollTop = messagesEl.scrollHeight; }
+
+function timeNow(){
+  const d = new Date();
+  return d.getHours().toString().padStart(2,"0") + ":" + d.getMinutes().toString().padStart(2,"0");
+}
+
+function addUserMsg(text){
+  const row = document.createElement("div");
+  row.className = "row user";
+  row.innerHTML = `<div class="bubble-wrap">
+      <div class="bubble"></div>
+      <div class="timestamp">${timeNow()}</div>
+    </div>`;
+  row.querySelector(".bubble").textContent = text;
+  messagesEl.appendChild(row);
+  scrollDown();
+}
+
+function addBotBubble(innerHtml, kind){
+  const row = document.createElement("div");
+  row.className = "row " + (kind || "bot");
+  row.innerHTML = `<img class="mini-avatar" src="${AVATAR_DATA}" alt="Oxibot">
+    <div class="bubble-wrap">
+      <div class="bubble">${innerHtml}</div>
+      <div class="timestamp">Oxibot · ${timeNow()}</div>
+    </div>`;
+  messagesEl.appendChild(row);
+  scrollDown();
+}
+
+function greetingReply(){ addBotBubble(pick(GREETING_REPLIES)); }
+function thanksReply(){ addBotBubble(pick(THANKS_REPLIES)); }
+function onlyThisReply(){ addBotBubble(pick(ONLY_THIS_REPLIES)); }
+
+function confusionReply(){
+  if(lastEntry){
+    addBotBubble(`<span class="rephrase-tag">Explicando de outro jeito</span><br>${lastEntry.simple}`);
+  } else {
+    addBotBubble("Sem problema! Me diz qual solicitação você quer entender (ex: locação, venda, recolhimento) que eu explico com calma. Também dá pra abrir a lista de solicitações no menu ☰.");
+  }
+}
+
+function missReply(query){
+  const row = document.createElement("div");
+  row.className = "row miss";
+  row.innerHTML = `<img class="mini-avatar" src="${AVATAR_DATA}" alt="Oxibot">
+    <div class="bubble-wrap">
+      <div class="bubble">${pick(MISS_INTROS)}<br>
+        Pergunta: <i>"${query.replace(/</g,"&lt;")}"</i><br><br>
+        Peça pra incluir essa solicitação na minha base (é só adicionar um bloco no arquivo) que eu já respondo da próxima vez.</div>
+      <div class="timestamp">Oxibot · ${timeNow()}</div>
+    </div>`;
+  messagesEl.appendChild(row);
+  scrollDown();
+}
+
+function showTyping(){
+  const row = document.createElement("div");
+  row.className = "row bot typing-row";
+  row.innerHTML = `<img class="mini-avatar" src="${AVATAR_DATA}" alt="Oxibot">
+    <div class="bubble-wrap"><div class="bubble"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></div></div>`;
+  messagesEl.appendChild(row);
+  scrollDown();
+  return row;
+}
+
+function ask(query){
+  if(!query.trim()) return;
+  addUserMsg(query);
+  inputEl.value = "";
+
+  const qNorm = normalize(query);
+  const typingRow = showTyping();
+
+  setTimeout(()=>{
+    typingRow.remove();
+    if(matchesAny(qNorm, GREETING_PATTERNS) && qNorm.split(" ").length <= 4){ greetingReply(); return; }
+    if(matchesAny(qNorm, THANKS_PATTERNS)){ thanksReply(); return; }
+    if(matchesAny(qNorm, ONLY_THIS_PATTERNS) && qNorm.split(" ").length <= 5){ onlyThisReply(); return; }
+    if(matchesAny(qNorm, CONFUSION_PATTERNS)){ confusionReply(); return; }
+
+    const match = findAnswer(query);
+    if(match){ lastEntry = match; addBotBubble(match.html); }
+    else{ missReply(query); }
+  }, 450);
+}
+
+formEl.addEventListener("submit", e=>{ e.preventDefault(); ask(inputEl.value); });
+
+greetingReply();
+</script>
+</body>
+</html>
