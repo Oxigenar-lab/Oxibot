@@ -852,9 +852,8 @@ function missReply(query){
   row.className = "row miss";
   row.innerHTML = `<img class="mini-avatar" src="${AVATAR_DATA}" alt="Oxibot">
     <div class="bubble-wrap">
-      <div class="bubble">${pick(MISS_INTROS)}<br>
-        Pergunta: <i>"${query.replace(/</g,"&lt;")}"</i><br><br>
-        Peça pra incluir essa solicitação na minha base (é só adicionar um bloco no arquivo) que eu já respondo da próxima vez.</div>
+      <div class="bubble">Hmm, essa solicitação ainda não está cadastrada comigo. 🙁<br>
+        Peça pra Pollyanna incluir essa informação na minha base.</div>
       <div class="timestamp">Oxibot · ${timeNow()}</div>
     </div>`;
   messagesEl.appendChild(row);
