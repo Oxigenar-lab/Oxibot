@@ -485,7 +485,8 @@ const KNOWLEDGE_BASE = [
     keywords: ["estorno","solicitar estorno","cancelamento de plano","multa de cancelamento",
       "pagamento duplicado","cobranca indevida","cobrança indevida",
       "codigo da maquininha","código da maquininha","codigo cielo","código cielo","codigo rede","código rede",
-      "codigo estabelecimento","código estabelecimento","nsu","doc aut","cod ec","laranjinha itau","laranjinha itaú"],
+      "codigo estabelecimento","código estabelecimento","nsu","doc aut","cod ec","laranjinha itau","laranjinha itaú",
+      "rede link","cielo link","link de recorrencia estorno","link de recorrência estorno"],
     simple: "Resumindo: peça o estorno pelo formulário online, mas antes fale com a Flávia — principalmente se for cancelamento antes do prazo (tem multa de 30%) ou algum caso fora do padrão, como pagamento duplicado. Os códigos da maquininha (NSU, DOC, AUT, COD EC etc.) você tira direto da notinha, exatamente como está impresso.",
     html: `
       <h3>Estorno</h3>
@@ -499,7 +500,7 @@ const KNOWLEDGE_BASE = [
       <h3>Onde encontrar os códigos da maquininha para o formulário</h3>
       <p>Isso depende de como o pagamento foi feito:</p>
       <ul>
-        <li><b>Pagamento direto na máquina física:</b> os dados estão na própria nota impressa.</li>
+        <li><b>Pagamento direto na máquina física:</b> todos os dados, incluindo o código do estabelecimento, estão na própria nota impressa.</li>
         <li><b>Pagamento via link:</b> os dados estão no print de aprovação enviado pelo setor administrativo. Nesse caso, use o código de estabelecimento correspondente:</li>
       </ul>
       <ul>
@@ -508,6 +509,7 @@ const KNOWLEDGE_BASE = [
         <li>Oxigenar — REDE: <b>27543331</b></li>
         <li>Pulmonair — REDE: <b>74234030</b></li>
       </ul>
+      <div class="note">Esses códigos de estabelecimento só valem para pagamento via link — fique atento a qual plataforma foi usada: a REDE é para links normais (pagamento único), e a CIELO é para links de recorrência.</div>
       <p>Pra saber se é REDE ou CIELO, é só olhar a notinha: a <b>REDE</b> aparece como "Laranjinha Itaú", e a <b>CIELO</b> aparece com o próprio nome, "Cielo".</p>
       <div class="note">Os códigos de NSU, DOC, AUT, COD EC e outros também precisam ser preenchidos exatamente como aparecem na notinha da maquininha, sem alterações.</div>
       <p>Já nos casos de pagamento por recorrência, esses dados não vêm em notinha — peça direto pra alguém do ADM. Assim que receber, preencha os campos exatamente como o ADM te passou.</p>
