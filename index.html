@@ -633,6 +633,177 @@ const KNOWLEDGE_BASE = [
       <p>Existe uma tolerância de 10 minutos para o registro do ponto, mas ela serve apenas como margem para imprevistos — não é uma regra fixa.</p>
     `
   },
+  {
+    id: "registro-webapp",
+    title: "Registro de Ponto pelo Computador (WebApp)",
+    category: "RH",
+    keywords: ["registro webapp","bater ponto computador","registrar ponto pelo pc","webapp pontofopag",
+      "registro com senha","bater ponto pelo navegador","registrador web","web registrador"],
+    simple: "Resumindo: acesse webapp.pontofopag.com.br, faça login com CPF e senha (se for o primeiro acesso, peça a senha provisória ao RH), clique em Registrar embaixo do horário e pronto — aparece o comprovante na tela.",
+    html: `
+      <h3>Registro de Ponto pelo WebApp</h3>
+      <ol>
+        <li>Acesse <b>webapp.pontofopag.com.br</b> e aceite a política de privacidade/cookies.</li>
+        <li>Faça login com seu <b>CPF e senha</b>. Se for o primeiro acesso, peça a senha provisória ao RH e depois troque por uma nova.</li>
+        <li>Clique no botão <b>Registrar</b>, que fica logo abaixo do horário exato mostrado na tela.</li>
+      </ol>
+      <p>Se der tudo certo, o sistema mostra na tela o <b>comprovante de registro de ponto eletrônico</b>, com data, hora e um QR Code (o NSR). Também é possível consultar registros anteriores em "Consulta de Bilhetes".</p>
+    `
+  },
+  {
+    id: "registro-offline",
+    title: "Registro de Ponto Offline (sem internet)",
+    category: "RH",
+    keywords: ["registro offline","bater ponto sem internet","ponto offline","nsr nao confirmado",
+      "nsr não confirmado","registrar ponto sem sinal","bater ponto sem wifi"],
+    simple: "Resumindo: com internet, faça login marcando 'Manter Logado'. Aí desligue Wi-Fi e dados móveis e clique em Registrar. O ponto fica como 'NSR não confirmado' até você religar a internet — nesse momento ele sincroniza sozinho.",
+    html: `
+      <h3>Como registrar o ponto sem internet</h3>
+      <ol>
+        <li><b>Conecte-se a uma rede</b> antes de tudo — o login precisa ser feito com internet estável. Abra o app do Pontofopag, entre com CPF e senha e marque a opção <b>Manter Logado</b>.</li>
+        <li><b>Desligue completamente</b> o Wi-Fi e os dados móveis do celular.</li>
+        <li>Volte ao app e clique em <b>Registrar</b> normalmente.</li>
+      </ol>
+      <h3>Sobre o NSR (Número de Série de Registro)</h3>
+      <p>Enquanto estiver offline, o comprovante mostra o NSR como <b>"Não confirmado"</b> — isso é esperado, e por um tempo o registro fica invisível para o RH e no Epays.</p>
+      <div class="note">Assim que a internet voltar, é obrigatório abrir o app novamente para que as batidas sincronizem e o NSR seja confirmado. Sem esse passo, o ponto não passa a constar.</div>
+    `
+  },
+  {
+    id: "primeiro-acesso-epays",
+    title: "Primeiro Acesso ao Epays (Acesso Único)",
+    category: "RH",
+    keywords: ["primeiro acesso epays","acesso unico epays","acesso único epays","cadastrar senha epays",
+      "criar senha epays","esqueci senha epays","recuperar senha epays","validar contato epays","codigo de verificacao epays",
+      "código de verificação epays"],
+    simple: "Resumindo: acesse app.epays.com.br, informe seu CPF, aceite os termos, valide um contato (e-mail ou celular) com o código de 6 dígitos e crie sua senha (4 a 11 dígitos). Depois é só logar normalmente com CPF e senha.",
+    html: `
+      <h3>Primeiro acesso ao Epays</h3>
+      <p>O Epays usa o fluxo de <b>Acesso Único</b>: você não cria uma conta nova, apenas confirma seus dados e define uma senha.</p>
+      <ol>
+        <li>Acesse <b>app.epays.com.br</b> e aceite o uso de cookies (recomenda-se "Aceitar todos", que facilita o reconhecimento do dispositivo em acessos futuros).</li>
+        <li>Informe seu <b>CPF</b> (só números). Se for estrangeiro, use a opção específica e informe o ID do país de origem.</li>
+        <li>Na tela de boas-vindas, aceite os <b>Termos de Uso</b>.</li>
+        <li><b>Valide um contato:</b> escolha receber o código por e-mail ou SMS. Um código de 6 dígitos chega em instantes.</li>
+        <li>Se tiver dois contatos cadastrados, só um precisa ser validado — o segundo pode ser pulado na opção "Pular verificação".</li>
+        <li>Crie sua <b>nova senha</b>, com no mínimo 4 e no máximo 11 dígitos (repita a mesma senha nos dois campos).</li>
+        <li>Faça login com CPF e a senha criada. Você pode marcar "Manter Conectado" para ficar logado por até 3 meses (sem marcar, a sessão dura 12 horas).</li>
+        <li>No primeiro acesso ao ambiente do Epays, será preciso aceitar a <b>Política de Privacidade</b> e preencher a <b>Autodeclaração de Raça</b> (conforme a Lei 14.553/2023).</li>
+      </ol>
+      <div class="note">Se não houver e-mail ou celular cadastrado, o sistema não localiza o usuário — nesse caso é preciso pedir ao RH para cadastrar um contato válido. Depois de 3 tentativas de senha incorreta, o acesso fica bloqueado por 3 minutos.</div>
+      <p><b>Esqueceu a senha?</b> Na tela de login, use "Esqueci a senha" e siga o mesmo processo de validação por e-mail ou SMS para criar uma nova.</p>
+    `
+  },
+  {
+    id: "justificar-ponto",
+    title: "Justificativa de Ponto no Epays",
+    category: "RH",
+    keywords: ["justificar ponto","justificativa de ponto","esqueci de bater o ponto","corrigir ponto",
+      "ajuste de ponto epays","batida duplicada","falta atestado epays","justificar falta"],
+    simple: "Resumindo: no Epays, vá em Cartão Ponto > Justificar Falta, abra o dia certo e escolha 'Período' (pra corrigir um horário ou remover batida duplicada) ou 'Dia' (pra afastamento — precisa anexar atestado/comprovante). Só dá pra justificar a partir do dia seguinte, e você tem 4 minutos pra concluir.",
+    html: `
+      <h3>Como justificar o ponto no Epays</h3>
+      <ol>
+        <li>Acesse o Epays com CPF e senha e vá em <b>Cartão Ponto > Justificar Falta</b>.</li>
+        <li>Clique no ícone de olho e depois selecione o <b>dia</b> a ser justificado.</li>
+        <li>Escolha o tipo de justificativa:
+          <ul>
+            <li><b>Período:</b> use quando esqueceu de bater um horário específico ou bateu em duplicidade e quer corrigir/desconsiderar.</li>
+            <li><b>Dia:</b> use quando faltou o dia inteiro (ex: atestado médico) — nesse caso é obrigatório anexar o comprovante.</li>
+          </ul>
+        </li>
+        <li>Preencha o horário justificado, a justificativa e o motivo, depois clique em <b>Salvar</b>.</li>
+      </ol>
+      <div class="note">IMPORTANTE: só é possível justificar a partir do dia seguinte — o sistema não permite justificar o dia de hoje ou dias futuros. Você também tem apenas <b>4 minutos</b> para concluir; se passar do tempo, perde o que preencheu e precisa começar de novo.</div>
+      <p>Ao incluir uma nova marcação, reordene as batidas com as <b>setas</b>, respeitando a ordem real em que elas aconteceram — isso evita que a justificativa seja reprovada. Anexos podem ser imagem, PDF, Word ou Excel (até 5 arquivos por justificativa).</p>
+      <p>O botão "Salvar" só libera depois que todos os campos obrigatórios estiverem preenchidos — não dá pra salvar em branco ou só com anexo.</p>
+      <p>Depois de salva, a justificativa fica marcada em <b>amarelo</b> no espelho de ponto, aguardando aprovação do Gestor/RH. Para acompanhar o status, clique de novo no dia justificado ou vá em <b>Fale com o RH > Solicitações</b>.</p>
+    `
+  },
+  {
+    id: "assinar-espelho-ponto",
+    title: "Assinar Espelho de Ponto",
+    category: "RH",
+    keywords: ["assinar espelho ponto","assinar cartao ponto","assinar cartão ponto","aprovar espelho ponto",
+      "assinatura eletronica ponto","assinar ponto eletronicamente"],
+    simple: "Resumindo: no Epays, vá em Cartão Ponto > Espelho Ponto, clique em 'Pendente' e depois em 'Aprovar'. Se não concordar com as horas, dá pra enviar uma justificativa em vez de aprovar.",
+    html: `
+      <h3>Como assinar eletronicamente o cartão de ponto</h3>
+      <ol>
+        <li>Acesse o Epays com CPF e senha e vá em <b>Cartão Ponto > Espelho Ponto</b>.</li>
+        <li>Localize o cartão do mês e clique em <b>Pendente</b>.</li>
+        <li>Confira as horas apontadas e clique em <b>Aprovar</b> para assinar eletronicamente.</li>
+      </ol>
+      <p>Caso não concorde com o apontamento de horas exibido, existe a opção de enviar uma <b>justificativa</b> ali mesmo, em vez de aprovar direto.</p>
+    `
+  },
+  {
+    id: "config-inicial-app",
+    title: "Configuração Inicial do App Pontofopag",
+    category: "RH",
+    keywords: ["configuracao inicial app","configuração inicial app","instalar pontofopag",
+      "primeiro acesso pontofopag app","permissao camera localizacao","permissão câmera localização",
+      "fuso horario automatico","fuso horário automático","baixar app pontofopag","reconhecimento facial ponto"],
+    simple: "Resumindo: baixe o app Pontofopag (iOS ou Android), aceite os termos, permita câmera/localização/fotos, entre com CPF e a senha que o RH mandou e crie uma senha nova. Se aparecer aviso de bloqueio, vá nas configurações do celular e ative Data e Hora automática da rede.",
+    html: `
+      <h3>Configuração inicial do aplicativo</h3>
+      <ol>
+        <li><b>Baixe o app "Pontofopag – Registrador Digital de Ponto"</b> na App Store (iOS) ou Play Store (Android).</li>
+        <li>Ao abrir pela primeira vez, aceite a <b>Política de Privacidade</b> no botão verde "Aceitar".</li>
+        <li>Conceda as permissões solicitadas:
+          <ul>
+            <li><b>Câmera:</b> necessária para o Reconhecimento Facial.</li>
+            <li><b>Localização:</b> necessária para o controle do local do registro.</li>
+            <li><b>Fotos e Mídia:</b> necessária para armazenar o Reconhecimento Facial.</li>
+          </ul>
+        </li>
+        <li>No <b>primeiro acesso</b>, informe seu CPF e a senha provisória enviada pelo RH, depois crie e confirme uma senha nova.</li>
+      </ol>
+      <div class="note">Se aparecer o aviso "Não é permitido registro, configurar fuso horário como automático", vá até as <b>Configurações do celular > Data e Hora</b> e ative a opção de data e horário automático da rede.</div>
+    `
+  },
+  {
+    id: "ferias-treinamento",
+    title: "Férias — Regras e Dúvidas Comuns",
+    category: "RH",
+    keywords: ["ferias","férias","periodo aquisitivo","período aquisitivo","periodo concessivo","período concessivo",
+      "fracionar ferias","fracionar férias","vender ferias","vender férias","abono pecuniario","abono pecuniário",
+      "pagamento de ferias","pagamento de férias","aviso de ferias","aviso de férias","tirar ferias","tirar férias",
+      "quantos dias de ferias","quantos dias de férias"],
+    simple: "Resumindo: você tem direito a 30 dias de férias a cada 12 meses trabalhados (período aquisitivo), e a empresa tem os 12 meses seguintes pra conceder (período concessivo). Dá pra fracionar em até 3 partes (uma com no mínimo 14 dias, as outras com no mínimo 5) e vender até 10 dias. O pagamento (salário + 1/3) sai até 2 dias antes de começar, e o aviso da data tem que vir com 30 dias de antecedência.",
+    html: `
+      <h3>O que são férias</h3>
+      <p>É um direito garantido pela CLT (art. 129): todo colaborador tem direito a <b>30 dias de férias</b> a cada 12 meses de trabalho — um período de descanso remunerado.</p>
+      <h3>Período aquisitivo x período concessivo</h3>
+      <ul>
+        <li><b>Período aquisitivo:</b> os 12 meses de trabalho que geram o direito às férias.</li>
+        <li><b>Período concessivo:</b> os 12 meses seguintes em que a empresa deve conceder as férias.</li>
+      </ul>
+      <p><i>Exemplo:</i> trabalhou de 01/04/2024 a 31/03/2025 (aquisitivo) → pode tirar férias até 31/03/2026 (concessivo).</p>
+      <h3>Fracionamento de férias</h3>
+      <p>Desde a Reforma Trabalhista (2017), os 30 dias podem ser divididos em até <b>3 períodos</b>, desde que:</p>
+      <ul>
+        <li>1 dos períodos tenha no mínimo <b>14 dias corridos</b>;</li>
+        <li>os outros não sejam menores que <b>5 dias</b>.</li>
+      </ul>
+      <p>✅ Exemplos válidos: 14+10+6, 14+5+11, 15+10+5, 20+10, 25+5.<br>❌ Exemplos inválidos: 10+10+10, 14+4+12, 10+5+15.</p>
+      <h3>Venda de férias (abono pecuniário)</h3>
+      <p>É possível "vender" até <b>1/3 dos dias</b> (art. 143 da CLT) — ou seja, em 30 dias de férias, dá pra vender até 10 dias e descansar 20. A venda é opcional e deve ser solicitada junto com o pedido de férias; o valor é pago junto com as férias, incluindo o 1/3 constitucional sobre os dias vendidos.</p>
+      <h3>Pagamento das férias</h3>
+      <p>O colaborador recebe o salário referente ao período + <b>1/3 constitucional</b> + valor dos dias vendidos (se houver), tudo pago até <b>2 dias antes</b> do início das férias. Não há um novo pagamento no retorno — o próximo salário vem no fechamento normal do mês, por isso vale se planejar financeiramente para esse intervalo.</p>
+      <h3>Dúvidas comuns</h3>
+      <ul>
+        <li><b>A empresa escolhe a data?</b> Sim, mas deve ouvir o colaborador e avisar com no mínimo <b>30 dias de antecedência</b> (art. 135 da CLT).</li>
+        <li><b>Posso sair numa sexta-feira?</b> Não — as férias não podem começar nos 2 dias que antecedem feriado ou repouso semanal (art. 134, §3º). Quem trabalha aos sábados, o ideal é iniciar na segunda-feira.</li>
+        <li><b>Quais benefícios continuam?</b> Plano de saúde permanece ativo. Vale-transporte e vale-refeição não são pagos durante as férias.</li>
+        <li><b>Posso tirar férias antes de completar 12 meses?</b> Só com acordo formal entre empresa e colaborador — a regra é aguardar o período aquisitivo completo.</li>
+        <li><b>Banco de horas pode emendar com as férias?</b> Pode, desde que alinhado com o gestor e o RH — mas nunca no lugar das férias.</li>
+        <li><b>Quem está afastado (licença maternidade, auxílio-doença) perde o direito?</b> Não perde, mas o período pode ser ajustado conforme o tempo de afastamento.</li>
+      </ul>
+      <h3>Dicas</h3>
+      <p>Solicite as férias com antecedência, organize suas demandas e planeje a transferência de atividades antes de sair, faça um checklist final com sua liderança e aproveite o descanso.</p>
+    `
+  },
 
   /* ===================== PRODUTOS E FORNECEDORES ===================== */
   {
