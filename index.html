@@ -826,13 +826,27 @@ const KNOWLEDGE_BASE = [
   },
 
   {
-    id: "reembolso-uber-99",
-    title: "Reembolso de Uber/99",
+    id: "reembolso-despesas",
+    title: "Reembolso de Despesas (Uber/99 e Gerais)",
     category: "Financeiro",
     keywords: ["reembolso uber","reembolso 99","recibo uber","recibo 99","reembolso de viagem",
-      "reembolso corrida","print da corrida"],
-    simple: "Resumindo: pedidos de reembolso de Uber ou 99 precisam vir com o recibo emitido pelo próprio aplicativo — não são aceitos prints ou fotos da tela da corrida.",
+      "reembolso corrida","print da corrida","formato de reembolso","modelo de reembolso",
+      "padrao de reembolso","padrão de reembolso","reembolso material de limpeza","reembolso correios",
+      "reembolso despesas","total do reembolso","pdf de reembolso"],
+    simple: "Resumindo: todo pedido de reembolso segue o formato Valor / Data / Descrição / Autorização, com o Total no final, sob o título 'REEMBOLSO [NOME]'. Envie tudo em um único PDF com as notas e comprovantes (dá pra juntar no ILOVEPDF). Reembolsos de Uber/99 também precisam do recibo oficial do app, não vale print da corrida.",
     html: `
+      <h3>Formato Padrão para Envio de Reembolsos</h3>
+      <p>Todo pedido de reembolso deve seguir o formato: <b>Valor / Data / Descrição / Autorização</b>, com o Total ao final.</p>
+      <p><b>Exemplo:</b></p>
+      <div class="note">
+        REEMBOLSO GABRIEL<br>
+        R$ 24,55 - 09/09 - Uber atendimento domiciliar, autorizado Luiz.<br>
+        R$ 15,00 - 10/09 - Material Limpeza Loja VR, autorizado Breno.<br>
+        R$ 50,00 - 10/09 - Postagem Correios, autorizado Raphael.<br>
+        Total: R$ 89,55
+      </div>
+      <p>Salve esse modelo e utilize em todos os pedidos de reembolso — isso padroniza e agiliza o processo.</p>
+      <div class="note">ATENÇÃO: sempre enviar em anexo um único PDF com todas as notas e comprovantes (sugestão: juntar os arquivos no site ILOVEPDF).</div>
       <h3>Reembolso de Viagens (Uber/99)</h3>
       <p>Os pedidos de reembolso de viagens realizadas por Uber ou 99 devem ser enviados acompanhados do <b>recibo emitido pelo próprio aplicativo</b>.</p>
       <div class="note">Não são aceitos prints da tela da corrida nem fotos da tela do celular.</div>
