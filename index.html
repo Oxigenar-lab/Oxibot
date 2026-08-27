@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oxibot — Assistente do Representante</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20128%20128%22%3E%0A%3Ccircle%20cx%3D%2264%22%20cy%3D%2264%22%20r%3D%2264%22%20fill%3D%22%231f6f78%22/%3E%0A%3Crect%20x%3D%2260%22%20y%3D%2228%22%20width%3D%228%22%20height%3D%2218%22%20rx%3D%224%22%20fill%3D%22%23e8f0f1%22/%3E%0A%3Ccircle%20cx%3D%2264%22%20cy%3D%2224%22%20r%3D%227%22%20fill%3D%22%23e08e45%22/%3E%0A%3Crect%20x%3D%2232%22%20y%3D%2246%22%20width%3D%2264%22%20height%3D%2250%22%20rx%3D%2216%22%20fill%3D%22%23ffffff%22/%3E%0A%3Ccircle%20cx%3D%2252%22%20cy%3D%2271%22%20r%3D%228%22%20fill%3D%22%231f6f78%22/%3E%0A%3Ccircle%20cx%3D%2276%22%20cy%3D%2271%22%20r%3D%228%22%20fill%3D%22%23e08e45%22/%3E%0A%3Crect%20x%3D%2246%22%20y%3D%2288%22%20width%3D%2236%22%20height%3D%227%22%20rx%3D%223.5%22%20fill%3D%22%231f6f78%22%20opacity%3D%220.55%22/%3E%0A%3Crect%20x%3D%2220%22%20y%3D%2260%22%20width%3D%2210%22%20height%3D%2222%22%20rx%3D%225%22%20fill%3D%22%23154e55%22/%3E%0A%3Crect%20x%3D%2298%22%20y%3D%2260%22%20width%3D%2210%22%20height%3D%2222%22%20rx%3D%225%22%20fill%3D%22%23154e55%22/%3E%0A%3C/svg%3E">
+<style>
+  :root{
+    --bg:#f0ede6;
+    --card:#ffffff;
+    --primary:#1f6f78;
+    --primary-dark:#154e55;
+    --accent-soft:#e7f0f1;
+    --warm:#e08e45;
+    --warm-dark:#c4762f;
+    --warm-soft:#fbeee0;
+    --bot-bubble:#f2f5f5;
+    --text:#22282c;
+    --text-soft:#6b7680;
+    --border:#e8e4dc;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    display:flex;
+    justify-content:center;
+    padding:0;
+  }
+  .card{
+    width:100%;
+    max-width:none;
+    height:100vh;
+    max-height:none;
+    background:var(--card);
+    border-radius:0;
+    box-shadow:none;
+    display:flex;
+    overflow:hidden;
+  }
+
+  /* ===== Sidebar ===== */
+  .sidebar{
+    width:200px;
+    flex-shrink:0;
+    background:var(--primary-dark);
+    color:#fff;
+    display:flex;
+    flex-direction:column;
+    padding:22px 0;
+  }
+  .sidebar-brand{
+    padding:0 18px 18px;
+    border-bottom:1px solid rgba(255,255,255,.12);
+    margin-bottom:14px;
+  }
+  .sidebar-brand img{
+    width:52px;height:52px;border-radius:50%;
+    display:block; margin-bottom:10px;
+    border:2px solid rgba(255,255,255,.35);
+  }
+  .sidebar-brand .name{font-size:.95rem; font-weight:700;}
+  .sidebar-brand .role{font-size:.72rem; color:#bcd8da; margin-top:2px;}
+  .sidebar h2{
+    font-size:.68rem;
+    text-transform:uppercase;
+    letter-spacing:.07em;
+    color:#8fb9bc;
+    margin:6px 18px 8px;
+    font-weight:700;
+  }
+  .sidebar-list{
+    overflow-y:auto;
+    flex:1;
+    padding:0 10px;
+  }
+  .side-btn{
+    display:block;
+    width:100%;
+    text-align:left;
+    background:none;
+    border:none;
+    color:#e4f0f1;
+    padding:9px 10px;
+    border-radius:9px;
+    font-size:.79rem;
+    cursor:pointer;
+    margin-bottom:2px;
+    line-height:1.3;
+  }
+  .side-btn:hover{background:rgba(255,255,255,.1);}
+
+  @media (max-width:640px){
+    .sidebar{
+      position:fixed;
+      left:0; top:0; bottom:0;
+      z-index:20;
+      transform:translateX(-100%);
+      transition:transform .25s ease;
+      box-shadow:10px 0 30px rgba(0,0,0,.2);
+    }
+    .sidebar.open{transform:translateX(0);}
+    .card{max-width:100%; height:100vh; max-height:none; border-radius:0;}
+    body{padding:0;}
+  }
+
+  /* ===== Chat column ===== */
+  .chat-col{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    min-width:0;
+  }
+  header{
+    background:var(--primary);
+    color:#fff;
+    padding:14px 18px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+  }
+  .menu-btn{
+    display:none;
+    background:rgba(255,255,255,.16);
+    border:none;
+    color:#fff;
+    width:34px;height:34px;
+    border-radius:9px;
+    font-size:1rem;
+    cursor:pointer;
+    flex-shrink:0;
+  }
+  @media (max-width:640px){ .menu-btn{display:block;} }
+  .avatar-img{
+    width:42px;height:42px;
+    border-radius:50%;
+    border:2px solid rgba(255,255,255,.5);
+    flex-shrink:0;
+  }
+  .header-text{flex:1; min-width:0;}
+  header h1{margin:0; font-size:1rem; font-weight:700;}
+  .status{
+    display:flex;align-items:center;gap:6px;
+    font-size:.75rem;
+    color:#d3ecee;
+    margin-top:2px;
+  }
+  .status .dot{width:7px;height:7px;border-radius:50%; background:#6be3a3; display:inline-block;}
+
+  .messages{
+    flex:1;
+    overflow-y:auto;
+    padding:20px 20px 8px;
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+    background:
+      radial-gradient(circle at 15% 0%, #f7fbfb 0%, var(--bg) 55%);
+  }
+  .row{display:flex; align-items:flex-end; gap:8px; margin:7px 0;}
+  .row.user{justify-content:flex-end;}
+  .row .mini-avatar{
+    width:28px;height:28px;
+    border-radius:50%;
+    flex-shrink:0;
+    border:1.5px solid #fff;
+    box-shadow:0 1px 3px rgba(0,0,0,.15);
+  }
+  .row.miss .mini-avatar{filter:saturate(.5);}
+  .bubble-wrap{display:flex; flex-direction:column; max-width:76%;}
+  .row.user .bubble-wrap{align-items:flex-end;}
+  .bubble{
+    padding:12px 15px;
+    border-radius:17px;
+    font-size:.91rem;
+    line-height:1.55;
+  }
+  .row.bot .bubble{background:var(--bot-bubble); border-bottom-left-radius:5px;}
+  .row.miss .bubble{background:#fbeeec; color:#7a3a30; border-bottom-left-radius:5px;}
+  .row.user .bubble{background:var(--warm); color:#fff; border-bottom-right-radius:5px;}
+  .timestamp{font-size:.68rem; color:var(--text-soft); margin-top:4px; padding:0 4px;}
+
+  .bubble h3{margin:0 0 6px; font-size:.95rem; color:var(--primary-dark);}
+  .bubble ol, .bubble ul{margin:6px 0; padding-left:20px;}
+  .bubble .note{
+    margin-top:8px; padding:8px 10px;
+    background:var(--warm-soft); color:var(--warm-dark);
+    border-radius:8px; font-size:.82rem;
+  }
+  .bubble .rephrase-tag{
+    display:inline-block; font-size:.72rem; font-weight:700;
+    color:var(--primary); background:var(--accent-soft);
+    padding:2px 9px; border-radius:20px; margin-bottom:8px;
+  }
+  .typing-row .bubble{display:flex; gap:4px; align-items:center; padding:12px 16px;}
+  .typing-dot{width:6px;height:6px;border-radius:50%; background:var(--text-soft); animation:blink 1.2s infinite ease-in-out;}
+  .typing-dot:nth-child(2){animation-delay:.2s;}
+  .typing-dot:nth-child(3){animation-delay:.4s;}
+  @keyframes blink{0%,80%,100%{opacity:.25;} 40%{opacity:1;}}
+
+  form{
+    display:flex; gap:8px;
+    padding:14px 18px;
+    border-top:1px solid var(--border);
+    background:var(--card);
+  }
+  input[type=text]{
+    flex:1; border:1px solid var(--border); background:var(--bg);
+    border-radius:22px; padding:11px 16px; font-size:.9rem; outline:none;
+  }
+  input[type=text]:focus{border-color:var(--warm);}
+  button.send{
+    width:42px; height:42px; background:var(--warm); color:#fff;
+    border:none; border-radius:50%; font-size:1.05rem; cursor:pointer; flex-shrink:0;
+  }
+  button.send:hover{background:var(--warm-dark);}
+
+  .overlay{
+    display:none;
+    position:fixed; inset:0; background:rgba(0,0,0,.35); z-index:15;
+  }
+  .overlay.show{display:block;}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="overlay" id="overlay"></div>
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <img src="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20128%20128%22%3E%0A%3Ccircle%20cx%3D%2264%22%20cy%3D%2264%22%20r%3D%2264%22%20fill%3D%22%231f6f78%22/%3E%0A%3Crect%20x%3D%2260%22%20y%3D%2228%22%20width%3D%228%22%20height%3D%2218%22%20rx%3D%224%22%20fill%3D%22%23e8f0f1%22/%3E%0A%3Ccircle%20cx%3D%2264%22%20cy%3D%2224%22%20r%3D%227%22%20fill%3D%22%23e08e45%22/%3E%0A%3Crect%20x%3D%2232%22%20y%3D%2246%22%20width%3D%2264%22%20height%3D%2250%22%20rx%3D%2216%22%20fill%3D%22%23ffffff%22/%3E%0A%3Ccircle%20cx%3D%2252%22%20cy%3D%2271%22%20r%3D%228%22%20fill%3D%22%231f6f78%22/%3E%0A%3Ccircle%20cx%3D%2276%22%20cy%3D%2271%22%20r%3D%228%22%20fill%3D%22%23e08e45%22/%3E%0A%3Crect%20x%3D%2246%22%20y%3D%2288%22%20width%3D%2236%22%20height%3D%227%22%20rx%3D%223.5%22%20fill%3D%22%231f6f78%22%20opacity%3D%220.55%22/%3E%0A%3Crect%20x%3D%2220%22%20y%3D%2260%22%20width%3D%2210%22%20height%3D%2222%22%20rx%3D%225%22%20fill%3D%22%23154e55%22/%3E%0A%3Crect%20x%3D%2298%22%20y%3D%2260%22%20width%3D%2210%22%20height%3D%2222%22%20rx%3D%225%22%20fill%3D%22%23154e55%22/%3E%0A%3C/svg%3E" alt="Oxibot">
+      <div class="name">Oxibot</div>
+      <div class="role">Assistente do Representante</div>
+    </div>
+    <h2>Solicitações</h2>
+    <div class="sidebar-list" id="topicsInner"></div>
+  </aside>
+
+  <div class="chat-col">
+    <header>
+      <button class="menu-btn" id="menuBtn" type="button">☰</button>
+      <img class="avatar-img" src="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20128%20128%22%3E%0A%3Ccircle%20cx%3D%2264%22%20cy%3D%2264%22%20r%3D%2264%22%20fill%3D%22%231f6f78%22/%3E%0A%3Crect%20x%3D%2260%22%20y%3D%2228%22%20width%3D%228%22%20height%3D%2218%22%20rx%3D%224%22%20fill%3D%22%23e8f0f1%22/%3E%0A%3Ccircle%20cx%3D%2264%22%20cy%3D%2224%22%20r%3D%227%22%20fill%3D%22%23e08e45%22/%3E%0A%3Crect%20x%3D%2232%22%20y%3D%2246%22%20width%3D%2264%22%20height%3D%2250%22%20rx%3D%2216%22%20fill%3D%22%23ffffff%22/%3E%0A%3Ccircle%20cx%3D%2252%22%20cy%3D%2271%22%20r%3D%228%22%20fill%3D%22%231f6f78%22/%3E%0A%3Ccircle%20cx%3D%2276%22%20cy%3D%2271%22%20r%3D%228%22%20fill%3D%22%23e08e45%22/%3E%0A%3Crect%20x%3D%2246%22%20y%3D%2288%22%20width%3D%2236%22%20height%3D%227%22%20rx%3D%223.5%22%20fill%3D%22%231f6f78%22%20opacity%3D%220.55%22/%3E%0A%3Crect%20x%3D%2220%22%20y%3D%2260%22%20width%3D%2210%22%20height%3D%2222%22%20rx%3D%225%22%20fill%3D%22%23154e55%22/%3E%0A%3Crect%20x%3D%2298%22%20y%3D%2260%22%20width%3D%2210%22%20height%3D%2222%22%20rx%3D%225%22%20fill%3D%22%23154e55%22/%3E%0A%3C/svg%3E" alt="Oxibot">
+      <div class="header-text">
+        <h1>Oxibot</h1>
+        <div class="status"><span class="dot"></span> Online agora · aqui pra te ajudar</div>
+      </div>
+    </header>
+
+    <div class="messages" id="messages"></div>
+
+    <form id="form">
+      <input type="text" id="input" placeholder="Digite sua dúvida..." autocomplete="off">
+      <button class="send" type="submit" aria-label="Enviar">➤</button>
+    </form>
+  </div>
+</div>
+
+<script>
+/* =========================================================================
+   BASE DE CONHECIMENTO — REPRESENTANTES
+   -------------------------------------------------------------------------
+   Para adicionar uma nova solicitação, copie um bloco { ... } abaixo e edite:
+     id        -> identificador único, sem espaço (ex: "novo-processo")
+     title     -> título mostrado no menu lateral e na resposta
+     keywords  -> palavras/expressões que o representante pode digitar
+     html      -> resposta detalhada, em HTML (<ol>, <ul>, <b>, a classe
+                  "note" destaca avisos importantes)
+     simple    -> uma versão curta, em linguagem simples, usada quando a
+                  pessoa diz que não entendeu a explicação detalhada
+   Depois de editar, salve o arquivo e recarregue no navegador. Não precisa
+   de mais nada — não há servidor nem banco de dados externo.
+   ========================================================================= */
+const DOC_NOTE = 'Colete a assinatura do cliente, digitalize o documento, envie no grupo de digitalização da loja e anexe no Sankhya.';
+
+const KNOWLEDGE_BASE = [
+  {
+    id: "locacao",
+    title: "Locação",
+    category: "Solicitações e Documentos",
+    keywords: ["locacao","locação","alugar equipamento","contrato de locacao","contrato de locação",
+      "cpap locacao","cpap locação","alugar cpap"],
+    simple: "Resumindo: pra locação, você precisa do RG do cliente, comprovante de residência, comprovante de pagamento e foto do equipamento. Descreva os itens certinho no formulário (nome, quantidade, valor) e depois é só baixar o contrato na tela de Contratos e a remessa no Portal de Vendas, buscando pelo nome do cliente.",
+    html: `
+      <h3>Locação</h3>
+      <p><b>Documentos necessários:</b> documento de identidade do cliente, comprovante de residência, comprovante de pagamento e uma foto legível do equipamento a ser locado.</p>
+      <h3>Como descrever os itens no formulário</h3>
+      <p>Descreva os itens por completo, seguindo este modelo:</p>
+      <ul>
+        <li>ATIVO – CPAP DreamStation Auto – 1 un – R$ 1.050,00</li>
+        <li>ATIVO – Umidificador DreamStation – 1 un – R$ 0,00</li>
+        <li>ATIVO – Modem DreamStation – 1 un – R$ 0,00</li>
+      </ul>
+      <p>Exemplos de número de série:</p>
+      <ul>
+        <li>J373025344ADF</li>
+        <li>H3730331428F7</li>
+        <li>CT7385584DE4E</li>
+      </ul>
+      <div class="note">Se o número de série do equipamento incluir um Device Number (DN), esse dado também deve constar na descrição do equipamento.</div>
+      <h3>Depois do envio do formulário</h3>
+      <p>O setor de solicitações emitirá o contrato e a remessa.</p>
+      <ul>
+        <li><b>Para baixar o contrato:</b> na tela de Contratos, digite o nome do cliente, clique em Aplicar e, na seta ao lado da lupa de pesquisa, selecione "Contrato de Locação Fidelização".</li>
+        <li><b>Para encontrar a remessa:</b> no Portal de Vendas, digite o nome do cliente no campo Parceiro.</li>
+      </ul>
+      <div class="note">${DOC_NOTE}</div>
+    `
+  },
+  {
+    id: "venda-produto",
+    title: "Venda de Produto",
+    category: "Solicitações e Documentos",
+    keywords: ["venda de produto","vender produto","vender item","vender acessorio","vender acessório",
+      "venda de acessorio","venda de acessório"],
+    simple: "Resumindo: só precisa do comprovante de pagamento e foto do item vendido. A nota de venda você encontra no Portal de Vendas, buscando pelo nome do cliente.",
+    html: `
+      <h3>Venda de Produto</h3>
+      <p><b>Documentos necessários:</b> comprovante de pagamento e foto do(s) item(ns) vendido(s).</p>
+      <h3>Como descrever os itens no formulário</h3>
+      <ul>
+        <li>Cateter Nasal – 1 un – R$ 35,00</li>
+        <li>Copo Umidificador – 2 un – R$ 35,00</li>
+      </ul>
+      <p>Para encontrar a nota de venda: no Portal de Vendas, digite o nome do cliente no campo Parceiro.</p>
+      <div class="note">${DOC_NOTE}</div>
+    `
+  },
+  {
+    id: "bonificacao-rep",
+    title: "Bonificação",
+    category: "Solicitações e Documentos",
+    keywords: ["bonificacao","bonificação","item bonificado","bonificar produto"],
+    simple: "Resumindo: descreva o motivo da bonificação e tire foto do item bonificado.",
+    html: `
+      <h3>Bonificação</h3>
+      <p><b>Documentos necessários:</b> motivo da bonificação e foto do(s) item(ns) bonificado(s).</p>
+      <div class="note">${DOC_NOTE}</div>
+    `
+  },
+  {
+    id: "renovacao-rep",
+    title: "Renovação",
+    category: "Solicitações e Documentos",
+    keywords: ["renovacao","renovação","renovacao simples","renovação simples","renovacao upgrade",
+      "renovação upgrade","upgrade de plano","fidelidade"],
+    simple: "Resumindo: só precisa do comprovante de pagamento. Se o cliente ficar no mesmo plano ou for pra um com fidelidade menor, é renovação simples; se for pra um plano com fidelidade maior, é upgrade. O contrato você baixa na tela de Contratos.",
+    html: `
+      <h3>Renovação</h3>
+      <p><b>Documento necessário:</b> comprovante de pagamento.</p>
+      <ul>
+        <li><b>Renovação simples:</b> o cliente permanece no mesmo plano ou migra para um plano com fidelidade menor.</li>
+        <li><b>Renovação upgrade:</b> o cliente migra para um plano com fidelidade maior.</li>
+      </ul>
+      <p>Para baixar o contrato: na tela de Contratos, digite o nome do cliente, clique em Aplicar e, na seta ao lado da lupa de pesquisa, selecione "Contrato de Locação Fidelização".</p>
+      <div class="note">${DOC_NOTE}</div>
+    `
+  },
+  {
+    id: "recolhimento",
+    title: "Recolhimento",
+    category: "Solicitações e Documentos",
+    keywords: ["recolhimento","recolher equipamento","retorno de remessa","ficha de recolhimento"],
+    simple: "Resumindo: tire foto do equipamento recolhido e descreva o motivo no formulário. A ficha de recolhimento fica no Portal de Vendas, no documento em vermelho \"Retorno de Remessa de Locação\".",
+    html: `
+      <h3>Recolhimento</h3>
+      <p><b>Documento necessário:</b> foto do equipamento recolhido. Descreva também o motivo do recolhimento no formulário.</p>
+      <p>Para baixar a ficha de recolhimento: no Portal de Vendas, digite o nome do cliente e clique em Aplicar. Localize o documento mais recente, destacado em vermelho, com o título "Retorno de Remessa de Locação", selecione-o e clique no ícone ao lado da impressora para gerar a "Ficha de Recolhimento".</p>
+      <div class="note">${DOC_NOTE}</div>
+    `
+  },
+  {
+    id: "venda-servico-ajuste-cpap",
+    title: "Ajuste de CPAP / Relatório",
+    category: "Solicitações e Documentos",
+    keywords: ["ajuste de cpap","relatorio","relatório","venda de servico","venda de serviço","servico tecnico",
+      "serviço técnico","emissao de relatorio","emissão de relatório"],
+    simple: "Resumindo: usado pra ajuste de CPAP ou emissão de relatório. Informe o tipo de serviço e o valor no formulário, junto com o comprovante de pagamento. A nota fica no Portal de Vendas.",
+    html: `
+      <h3>Venda de Serviço — Ajuste de CPAP ou Relatório</h3>
+      <p>Use essa opção sempre que for realizar um ajuste no equipamento do cliente ou emitir um relatório.</p>
+      <p>No formulário, informe o tipo de serviço e o valor. <b>Documento necessário:</b> comprovante de pagamento.</p>
+      <p>O setor de solicitações emitirá, no Portal de Vendas, um "Pedido de Venda Serviço" com o tipo de serviço, nome do cliente e valor. Para localizá-lo, acesse o Portal de Vendas e busque pelo nome do cliente.</p>
+      <div class="note">A coordenação também enviará, no seu privado, uma nota de serviço emitida pelo portal da Prefeitura.</div>
+      <div class="note">${DOC_NOTE}</div>
+    `
+  },
+  {
+    id: "venda-encomenda",
+    title: "Venda por Encomenda",
+    category: "Solicitações e Documentos",
+    keywords: ["venda por encomenda","retirada de equipamento","venda retirada","retirar equipamento"],
+    simple: "Resumindo: precisa do comprovante de pagamento e foto do equipamento retirado. A nota fica no Portal de Vendas.",
+    html: `
+      <h3>Venda por Encomenda — Venda/Retirada do Equipamento</h3>
+      <p><b>Documentos necessários:</b> foto do comprovante de pagamento e foto do equipamento que está sendo retirado.</p>
+      <p>Para extrair a nota de venda: acesse o Portal de Vendas, digite o nome do cliente e selecione a NF.</p>
+      <div class="note">${DOC_NOTE}</div>
+    `
+  },
+  {
+    id: "higienizacao-rep",
+    title: "Higienização",
+    category: "Solicitações e Documentos",
+    keywords: ["higienizacao","higienização","limpeza do equipamento"],
+    simple: "Resumindo: comprovante de pagamento e foto do equipamento a ser higienizado. A nota fica no Portal de Vendas.",
+    html: `
+      <h3>Higienização</h3>
+      <p><b>Documentos necessários:</b> foto do comprovante de pagamento e foto do equipamento que será higienizado.</p>
+      <p>A coordenação emitirá o "Pedido de Venda Serviço — Higienização". Para extrair essa nota: acesse o Portal de Vendas, digite o nome do cliente e selecione a NF.</p>
+      <div class="note">${DOC_NOTE}</div>
+    `
+  },
+  {
+    id: "troca-equipamento-locacao",
+    title: "Troca de Equipamento",
+    category: "Solicitações e Documentos",
+    keywords: ["troca de equipamento","troca de locacao","troca de locação","assistencia troca","trocar equipamento"],
+    simple: "Resumindo: foto dos dois equipamentos (o que sai e o que entra). Você imprime a nova remessa e a ficha de recolhimento do equipamento antigo.",
+    html: `
+      <h3>Troca de Equipamento de Locação — Assistência</h3>
+      <p><b>Documentos necessários:</b> foto dos dois equipamentos — o que está sendo trocado e o que ficará no lugar dele.</p>
+      <p>A coordenação emitirá a nova remessa e dará baixa na remessa do equipamento antigo. Você deverá imprimir a nova remessa e a ficha de recolhimento do equipamento antigo.</p>
+      <p>Para extrair a nota: acesse o Portal de Vendas, digite o nome do cliente e selecione a NF.</p>
+      <div class="note">${DOC_NOTE}</div>
+    `
+  },
+  {
+    id: "assistencia-garantia",
+    title: "Assistência (Garantia ou Não)",
+    category: "Solicitações e Documentos",
+    keywords: ["assistencia","assistência","garantia","equipamento em garantia","equipamento com defeito"],
+    simple: "Resumindo: só precisa de foto do equipamento. A coordenação cuida da inclusão no sistema.",
+    html: `
+      <h3>Assistência — Equipamento do Cliente em Garantia ou Não</h3>
+      <p><b>Documento necessário:</b> foto do equipamento.</p>
+      <p>A coordenação emitirá a nota de inclusão do equipamento no sistema e enviará no seu privado.</p>
+      <div class="note">${DOC_NOTE}</div>
+    `
+  },
+  {
+    id: "cancelamento-venda",
+    title: "Cancelamento de Venda",
+    category: "Solicitações e Documentos",
+    keywords: ["cancelamento","devolucao","devolução","cancelar venda","troca de venda"],
+    simple: "Resumindo: sempre precisa de autorização da supervisão antes de seguir com o cancelamento.",
+    html: `
+      <h3>Cancelamento de Venda — Devolução ou Troca</h3>
+      <p>Essa solicitação só pode ser realizada mediante autorização da supervisão. Entre em contato com o seu supervisor antes de dar andamento.</p>
+    `
+  },
+  {
+    id: "transferencias-rep",
+    title: "Transferências",
+    category: "Solicitações e Documentos",
+    keywords: ["transferencia","transferência","transferir equipamento"],
+    simple: "Resumindo: foto do equipamento e a nota fica no Portal de Movimentações Internas.",
+    html: `
+      <h3>Transferências</h3>
+      <p><b>Documento necessário:</b> foto do equipamento que será transferido.</p>
+      <p>A nota de transferência deve ser coletada no Portal de Movimentações Internas.</p>
+      <div class="note">${DOC_NOTE}</div>
+    `
+  },
+  {
+    id: "plano-acompanhamento",
+    title: "Plano de Acompanhamento",
+    category: "Solicitações e Documentos",
+    keywords: ["plano de acompanhamento","acompanhamento do cliente"],
+    simple: "Resumindo: contrato manual preenchido, com o comprovante de pagamento anexado no formulário.",
+    html: `
+      <h3>Plano de Acompanhamento</h3>
+      <p>É necessário preencher o contrato manual e anexar o comprovante de pagamento no formulário.</p>
+      <div class="note">${DOC_NOTE}</div>
+    `
+  },
+
+  /* ===================== ESTOQUE E SISTEMA ===================== */
+  {
+    id: "planilha-rastreabilidade",
+    title: "Planilha de Rastreabilidade (Estoque)",
+    category: "Estoque e Sistema",
+    keywords: ["planilha de rastreabilidade","formulario 023","formulário 023","aba entrada","aba saida","aba saída",
+      "controle de estoque planilha","atalhos da planilha","ctrl f planilha","backup de estoque","planilha de estoque"],
+    simple: "Resumindo: a planilha de rastreabilidade é o backup eletrônico do Formulário 023 e serve pra controlar entrada e saída de equipamentos na unidade. Todo equipamento que chega vai na aba Entrada; todo que sai vai na aba Saída, sempre em tempo real.",
+    html: `
+      <h3>Planilha de Rastreabilidade</h3>
+      <p>É a versão eletrônica do Formulário 023 do manual da garantia da qualidade, uma das exigências da vigilância sanitária. Serve como controle interno do estoque e ferramenta de backup, em complemento ao sistema.</p>
+      <h3>Aba Entrada</h3>
+      <ul>
+        <li>Todo equipamento que estiver na unidade deve constar nessa aba, com data de entrada, descrição do produto e controle (lote/série).</li>
+        <li>Os campos Apresentação, Local e Validade devem ser atualizados conforme a embalagem e a orientação física no estoque, no momento do recebimento.</li>
+        <li>Quando um produto zerar no estoque (quantidade 0), a linha deve ser excluída.</li>
+        <li>Equipamento que deixar a loja deve constar apenas na aba Destino.</li>
+        <li>Equipamento que retornar de locação volta para a aba Entrada e permanece na aba Destino, para histórico de aplicações.</li>
+      </ul>
+      <h3>Aba Saída</h3>
+      <ul>
+        <li>Todo equipamento que sair da unidade precisa ter um destino: cliente, fornecedor, outra filial, atendimento domiciliar, assistência técnica, médico etc.</li>
+        <li>Data e quantidade devem ser atualizadas no momento da saída.</li>
+        <li>O preenchimento deve ser feito em tempo real, durante o atendimento — sem esperar as emissões de Contrato e NF pelo Backoffice.</li>
+      </ul>
+      <h3>Atalhos úteis</h3>
+      <ul>
+        <li><b>Ctrl F</b> — pesquisar dentro da planilha (números de série, produto, lotes)</li>
+        <li><b>Shift + Espaço</b> — seleciona a linha inteira</li>
+        <li><b>Ctrl C</b> — copiar a seleção</li>
+        <li><b>Ctrl R</b> — recortar a seleção (usar para dar saída em equipamentos únicos)</li>
+        <li><b>Ctrl V</b> — colar a seleção</li>
+        <li><b>Ctrl ↓</b> — descer até a última linha preenchida</li>
+      </ul>
+    `
+  },
+  {
+    id: "sankhya-navegacao",
+    title: "Sistema Sankhya (login e navegação)",
+    category: "Estoque e Sistema",
+    keywords: ["sistema sankhya","navegador sankhya","login sankhya","senha sankhya","alterar senha sankhya",
+      "erp sankhya","como navegar no sankhya","trocar senha do sistema"],
+    simple: "Resumindo: o Sankhya é um ERP na nuvem acessado pelo Navegador Sankhya, com login e senha pessoais e intransferíveis. Pesquise as telas na barra de busca e navegue entre elas pelas abas. Pra trocar senha ou personalizar, clique na foto no canto superior direito.",
+    html: `
+      <h3>Sistema Sankhya</h3>
+      <p>O ERP funciona na nuvem, através do Navegador Sankhya. Cada usuário possui login e senha pessoal e <b>intransferível</b>.</p>
+      <p>O sistema se comporta como um navegador de internet: use o campo de pesquisa para encontrar as telas a serem operadas e navegue entre elas através das abas abertas.</p>
+      <h3>Alterar senha e personalizar</h3>
+      <p>Clique na foto no canto superior direito e siga as opções (Alterar foto, Alterar senha, entre outras).</p>
+    `
+  },
+  {
+    id: "cadastro-cliente-parceiros",
+    title: "Cadastro de Cliente (Tela Parceiros)",
+    category: "Estoque e Sistema",
+    keywords: ["cadastro de cliente","tela parceiros","novo registro parceiro","cadastrar cliente sankhya",
+      "cadastro de paciente","como conheceu a empresa","chave pix parceiro","cadastro de contato"],
+    simple: "Resumindo: sempre pesquise pelo CPF antes de cadastrar, pra evitar duplicidade. Preencha tipo de pessoa, 'Como conheceu a empresa', dados em CAIXA ALTA, data de nascimento (obrigatória pra CPAP), endereço começando pelo CEP, telefones e e-mail válidos, cadastre o contato responsável e salve no botão de check (F7).",
+    html: `
+      <h3>Tela Parceiros — Consultar e Criar Cadastro de Clientes</h3>
+      <ul>
+        <li>Antes de qualquer cadastro, pesquise o cliente sempre pelo <b>CPF</b>, para evitar homônimos.</li>
+        <li>Se o cliente já estiver cadastrado, não é necessário criar um novo registro.</li>
+        <li>Para iniciar um cadastro, clique em <b>Novo Registro</b>.</li>
+      </ul>
+      <h3>Preenchimento</h3>
+      <ul>
+        <li>Preencha primeiro o <b>Tipo de pessoa</b> (física ou jurídica) e a pergunta obrigatória <b>"Como conheceu a empresa"</b>.</li>
+        <li>Na aba Identificação, preencha todos os dados em <b>CAIXA ALTA</b>. A <b>Data de Nascimento</b> é indispensável para o cadastro nas plataformas de relatórios de CPAP.</li>
+        <li>Na aba Endereço, comece o preenchimento pelo CEP e complemente número e complemento.</li>
+        <li>Nos campos de telefone, cadastre mais de um número de contato sempre que possível. O e-mail precisa estar correto e ativo, pois é o canal oficial de comunicação da empresa com o cliente.</li>
+        <li>Salve o cadastro no botão de check (<b>F7</b>).</li>
+      </ul>
+      <h3>Contato do parceiro</h3>
+      <p>Cadastre o contato responsável pelo contrato de locação. Em casos de pessoa física, utilize o mesmo nome do cadastro do parceiro (pode copiar e colar direto no campo).</p>
+      <h3>Anexos e Observações</h3>
+      <ul>
+        <li>A aba <b>Anexos/Documentos</b> é usada para anexar receitas e exames do paciente, que devem estar previamente digitalizados no computador.</li>
+        <li>A aba <b>Observação</b> é um campo livre para informações do cliente, também usado quando o médico indicador ainda não está cadastrado no sistema.</li>
+      </ul>
+    `
+  },
+  {
+    id: "consulta-contratos",
+    title: "Consultar e Imprimir Contratos",
+    category: "Estoque e Sistema",
+    keywords: ["tela contratos","imprimir contrato","consultar contrato ativo","contrato de locacao fidelizacao",
+      "contrato de locação fidelização","contrato do club","numero do contrato","número do contrato"],
+    simple: "Resumindo: pesquise o parceiro na aba de filtros, veja o número do contrato ativo, escolha o botão certo (Contrato de Locação ou Contrato do Club), digite o número e clique em Visualizar Relatório. Dá pra enviar por e-mail, imprimir ou baixar em PDF.",
+    html: `
+      <h3>Tela Contratos — Consultar e Imprimir Contratos Ativos</h3>
+      <ul>
+        <li>Na aba de filtros (canto esquerdo), pesquise pelo Parceiro e clique em Aplicar.</li>
+        <li>Após localizar o parceiro, verifique o número do contrato ativo.</li>
+        <li>Utilize o botão correspondente: <b>Contrato de Locação</b> (demais locações e planos) ou <b>Contrato do Club</b> (específico).</li>
+        <li>Informe o número do contrato e clique em <b>Visualizar Relatório</b>.</li>
+        <li>É possível enviar o arquivo por e-mail para o cliente, imprimir ou baixar em PDF.</li>
+      </ul>
+    `
+  },
+  {
+    id: "portal-vendas-notas",
+    title: "Portal de Vendas (NF, Remessas, Recolhimentos)",
+    category: "Estoque e Sistema",
+    keywords: ["portal de vendas","imprimir nf","imprimir remessa","comprovante de recolhimento",
+      "imprimir bonificacao","imprimir bonificação","pedido de venda sankhya","pedido de higienizacao",
+      "pedido de assistencia","ficha de recolhimento"],
+    simple: "Resumindo: no Portal de Vendas, filtre por data/empresa/parceiro, selecione a nota (Venda, Remessa ou Bonificação) e use o botão de imprimir ou PDF. Toda NF precisa de uma via datada e assinada pelo cliente. Pra recolhimento, use Relatórios Formatados → Ficha de Recolhimento.",
+    html: `
+      <h3>Portal de Vendas</h3>
+      <p>Usado para imprimir NF de Venda, Bonificações, Remessas, Recolhimentos, Pedido de Venda, Pedido de Higienização e Pedido de Assistência.</p>
+      <ul>
+        <li>Use a aba de filtros do canto esquerdo para localizar o cliente — os filtros podem ser por data, empresa ou parceiro. Após selecionar, clique em Aplicar.</li>
+        <li>Ao selecionar a nota (Venda, Remessa de locação de equipamentos próprios ou Bonificação), use o botão de imprimir ou PDF para salvar a nota.</li>
+      </ul>
+      <div class="note">Toda NF precisa de uma via a ser datada e assinada pelo cliente no recebimento.</div>
+      <h3>Imprimir Comprovante de Recolhimento</h3>
+      <ul>
+        <li>Ao lado da impressora, selecione o campo <b>Relatórios Formatados → Ficha de Recolhimento</b>.</li>
+        <li>Imprima o comprovante de recolhimento.</li>
+      </ul>
+    `
+  },
+  {
+    id: "rastreabilidade-produtos-series-lotes",
+    title: "Consulta de Estoque, Séries e Lotes",
+    category: "Estoque e Sistema",
+    keywords: ["consulta de produtos sankhya","consulta de series","consulta de séries","gerencia de produtos",
+      "gerência de produtos","rastreabilidade por serie","rastreabilidade por série","rastreabilidade por lote",
+      "estoque do grupo oxigenar","numero de serie sankhya","número de série sankhya"],
+    simple: "Resumindo: a Consulta de Produtos mostra o estoque de todo o grupo Oxigenar por unidade. A Consulta de Séries rastreia produtos controlados por número de série (precisa ser idêntico ao cadastrado). A Gerência de Produtos rastreia por lote e mostra todos os clientes que compraram aquele produto, com telefone e e-mail.",
+    html: `
+      <h3>Tela Consulta de Produtos</h3>
+      <p>Consulta o estoque de todo o Grupo Oxigenar. Pesquise pelo nome do produto e clique em modo coluna para visualizar as fotos. No campo "Detalhes de estoque" é possível verificar o estoque em todas as unidades do grupo.</p>
+      <h3>Tela Consulta de Séries</h3>
+      <p>Rastreabilidade dos produtos controlados por série. Informe o número de série — ele precisa ser idêntico ao cadastrado, respeitando caracteres, maiúsculas, minúsculas e espaços. Cada movimento é uma nota, que pode ser conferida clicando duas vezes nela.</p>
+      <h3>Tela Gerência de Produtos</h3>
+      <p>Rastreabilidade de produtos controlados por lote. É possível filtrar por produto, período e local.</p>
+      <ul>
+        <li>Na aba <b>Parceiros</b>, é possível identificar todos os clientes que compraram o produto, com telefone e e-mail para contato.</li>
+        <li>Na aba <b>Extrato</b>, informando o lote específico, é possível ver todos os movimentos daquele lote.</li>
+      </ul>
+    `
+  },
+
+  /* ===================== FINANCEIRO ===================== */
+  {
+    id: "estorno",
+    title: "Estorno",
+    category: "Financeiro",
+    keywords: ["estorno","solicitar estorno","cancelamento de plano","multa de cancelamento",
+      "pagamento duplicado","cobranca indevida","cobrança indevida",
+      "codigo da maquininha","código da maquininha","codigo cielo","código cielo","codigo rede","código rede",
+      "codigo estabelecimento","código estabelecimento","nsu","doc aut","cod ec","laranjinha itau","laranjinha itaú",
+      "rede link","cielo link","link de recorrencia estorno","link de recorrência estorno"],
+    simple: "Resumindo: peça o estorno pelo formulário online, mas antes fale com a Flávia — principalmente se for cancelamento antes do prazo (tem multa de 30%) ou algum caso fora do padrão, como pagamento duplicado. Os códigos da maquininha (NSU, DOC, AUT, COD EC etc.) você tira direto da notinha, exatamente como está impresso.",
+    html: `
+      <h3>Estorno</h3>
+      <p><b>Como solicitar:</b> preencha o formulário online pelo link: <a href="https://forms.gle/mhVFoqCt2pmJdYyB8" target="_blank">forms.gle/mhVFoqCt2pmJdYyB8</a>. Leia com atenção a primeira página, que traz as instruções de preenchimento.</p>
+      <p>Depois de finalizar, avise a Flávia que o estorno foi solicitado.</p>
+      <h3>Quando solicitar</h3>
+      <p><b>Prazo:</b> 15 dias úteis.</p>
+      <p>Quando o cliente cancela um plano antes do prazo de encerramento, é calculada uma multa de 30% sobre o restante dos meses que deveriam ser pagos. Esse cálculo deve ser solicitado à Flávia antes de preencher o formulário.</p>
+      <h3>Casos atípicos</h3>
+      <p>Se for necessário solicitar um estorno fora do padrão — como pagamento duplicado feito pelo cliente ou cobrança da recorrência mesmo após o recolhimento do equipamento — comunique a Flávia antes de preencher o formulário.</p>
+      <h3>Onde encontrar os códigos da maquininha para o formulário</h3>
+      <p>Isso depende de como o pagamento foi feito:</p>
+      <ul>
+        <li><b>Pagamento direto na máquina física:</b> todos os dados, incluindo o código do estabelecimento, estão na própria nota impressa.</li>
+        <li><b>Pagamento via link:</b> os dados estão no print de aprovação enviado pelo setor administrativo. Nesse caso, use o código de estabelecimento correspondente:</li>
+      </ul>
+      <ul>
+        <li>Oxigenar — CIELO: <b>2774942289</b></li>
+        <li>Pulmonair — CIELO: <b>2862659163</b></li>
+        <li>Oxigenar — REDE: <b>27543331</b></li>
+        <li>Pulmonair — REDE: <b>74234030</b></li>
+      </ul>
+      <div class="note">Esses códigos de estabelecimento só valem para pagamento via link — fique atento a qual plataforma foi usada: a REDE é para links normais (pagamento único), e a CIELO é para links de recorrência.</div>
+      <p>Pra saber se é REDE ou CIELO, é só olhar a notinha: a <b>REDE</b> aparece como "Laranjinha Itaú", e a <b>CIELO</b> aparece com o próprio nome, "Cielo".</p>
+      <div class="note">Os códigos de NSU, DOC, AUT, COD EC e outros também precisam ser preenchidos exatamente como aparecem na notinha da maquininha, sem alterações.</div>
+      <p>Já nos casos de pagamento por recorrência, esses dados não vêm em notinha — peça direto pra alguém do ADM. Assim que receber, preencha os campos exatamente como o ADM te passou.</p>
+    `
+  },
+  {
+    id: "links-pagamento",
+    title: "Links de Pagamento",
+    category: "Financeiro",
+    keywords: ["link de pagamento","link de recorrencia","link de recorrência","solicitar link",
+      "cancelar recorrencia","cancelar recorrência","cancelamento de recorrencia","cancelamento de recorrência",
+      "codigo do link","código do link"],
+    simple: "Resumindo: tem dois tipos de link — pagamento único (venda ou locação) e recorrência (só para locação mensal). Peça no grupo do WhatsApp certo (Link - Oxigenar ou Link - Pulmonair) informando tipo, descrição, valor e parcelas.",
+    html: `
+      <h3>Links de Pagamento</h3>
+      <p>Existem dois tipos de link:</p>
+      <ul>
+        <li><b>Link de pagamento:</b> usado para pagamento único — pode ser para uma venda ou uma locação.</li>
+        <li><b>Link de recorrência:</b> usado para pagamento debitado mensalmente — deve ser usado apenas para locações mensais.</li>
+      </ul>
+      <h3>Como solicitar</h3>
+      <p>Faça o pedido no grupo do WhatsApp correspondente: <i>Link - Oxigenar</i> ou <i>Link - Pulmonair</i>, dependendo da empresa. A solicitação deve conter:</p>
+      <ul>
+        <li>Tipo de link (recorrência ou pagamento)</li>
+        <li>Descrição do produto</li>
+        <li>Valor</li>
+        <li>Número de parcelas (no caso de link de pagamento)</li>
+      </ul>
+      <div class="note">A aprovação do link sempre vem acompanhada de um código, que deve ser inserido na planilha da unidade.</div>
+      <h3>Pontos de atenção — recorrência</h3>
+      <p>Como o pagamento é automático, é preciso avisar o Setor Administrativo imediatamente no grupo de Link para cancelar a recorrência assim que o cliente devolver o equipamento em loja — isso evita um possível estorno. No momento da aplicação, avise também o cliente sobre esse detalhe, para que ele sinalize caso vá devolver com atraso, permitindo adiar a data da recorrência.</p>
+      <h3>Cancelamento de recorrência</h3>
+      <p>Envie no grupo de Link a ficha de recolhimento ou de renovação, comprovando que o cliente devolveu o equipamento ou renovou com outra forma de pagamento. O representante comercial deve acompanhar até receber a confirmação de cancelamento do Setor Administrativo.</p>
+    `
+  },
+  {
+    id: "planilha-resultado",
+    title: "Planilha de Resultado",
+    category: "Financeiro",
+    keywords: ["planilha de resultado","preenchimento da planilha","coluna j","coluna k","coluna a nome",
+      "coluna b data","coluna h descritivo","serie lote coluna i","série lote coluna i",
+      "codigo de pagamento","código de pagamento","cv do comprovante","venda e locacao juntas",
+      "venda e locação juntas","pix cpf pagador","link de pagamento codigo","link de pagamento código",
+      "vanessa planilha resultado","codigo cv comprovante"],
+    simple: "Resumindo: nome em MAIÚSCULAS igual ao sistema (coluna A), data DD/MM/AAAA (coluna B), valor exatamente igual ao comprovante (colunas C a G), descritivo do produto (coluna H — locação sempre começa com 'Locação'), série/lote (coluna I), forma de pagamento (coluna J) e o código do pagamento (coluna K): CV da maquininha, código do link ou CPF do pagador no PIX. Venda e locação sempre lançadas separadas. Dúvidas: Vanessa, (21) 96808-1000.",
+    html: `
+      <h3>Preenchimento da Planilha de Resultado</h3>
+      <p>Para evitar divergências na conciliação dos pagamentos, siga obrigatoriamente o padrão abaixo.</p>
+      <h3>Nome (coluna A)</h3>
+      <p>Informe o nome completo, exatamente como está cadastrado no sistema, em <b>LETRAS MAIÚSCULAS</b>.</p>
+      <h3>Data (coluna B)</h3>
+      <p>Preencha sempre no formato <b>DD/MM/AAAA</b> (ex.: 01/08/2026).</p>
+      <h3>Valor (colunas C, D, E, F, G)</h3>
+      <div class="note">IMPORTANTE: o valor informado em cada linha deve corresponder exatamente ao valor do comprovante de pagamento e ao código de pagamento informado.</div>
+      <p>Essas colunas correspondem a Vendas de Acessórios, Locações, Locações de CPAP, Renovações e Equipamento Vendido — lance o valor na coluna correta, de acordo com o tipo de atendimento.</p>
+      <h3>Descritivo de atendimento (coluna H)</h3>
+      <p>Selecione o produto vendido. Nos casos de locação, o descritivo sempre começa com a palavra "Locação", o que facilita a busca (ex.: Locação de Concentrador 5L Recorrência OXIGENOTERAPIA).</p>
+      <h3>Série/Lote (coluna I)</h3>
+      <p>Informe a série ou o lote do equipamento.</p>
+      <div class="note">IMPORTANTE: sempre que houver Venda e Locação juntas, os pagamentos devem ser recebidos e lançados separadamente.</div>
+      <h3>Forma de pagamento (coluna J) e Código de pagamento (coluna K)</h3>
+      <p>Selecione a forma de pagamento na coluna J e informe o código correspondente na coluna K, conforme abaixo. <b>Coloque apenas um código por pagamento</b> — a planilha usa fórmulas do Excel para consolidar os dados.</p>
+      <ul>
+        <li><b>Cartão de débito ou crédito (maquininha):</b> informe o <b>CV</b> que consta no comprovante.</li>
+        <li><b>Link de pagamento (crédito ou recorrência):</b> copie e cole o código enviado pelo Financeiro no grupo de Link, na aprovação do pagamento.</li>
+        <li><b>PIX (chave ou maquininha):</b> informe somente o CPF do responsável pelo pagamento — apenas os números, sem pontuação.</li>
+      </ul>
+      <p><b>Dúvidas:</b> Vanessa — (21) 96808-1000.</p>
+    `
+  },
+
+  /* ===================== COMUNICAÇÃO INTERNA ===================== */
+  {
+    id: "grupos-whatsapp",
+    title: "Grupos do WhatsApp",
+    category: "Comunicação Interna",
+    keywords: ["grupos whatsapp","grupo whatsapp","grupo administrativo","qual grupo usar",
+      "grupo de link","grupo de avisos","central de solicitacoes","central de solicitações",
+      "grupo transferencias","grupo transferências","grupo alinhamento de estoque",
+      "grupo reposicao de estoque","grupo reposição de estoque"],
+    simple: "Resumindo: cada grupo tem uma função específica — veja qual usar antes de mandar sua mensagem. Pra estoque, tem o grupo de Transferências (NF recebidas), Alinhamento de Estoque (ajustes e divergências) e Reposição de Estoque (pedidos quinzenais).",
+    html: `
+      <h3>Grupos Administrativos no WhatsApp</h3>
+      <ul>
+        <li><b>Oxigenar / Pulmonair (geral):</b> grupo geral da empresa.</li>
+        <li><b>Link:</b> para solicitar links de pagamento, aprovações e cancelamentos de recorrência.</li>
+        <li><b>Central de Solicitações:</b> controle das solicitações enviadas.</li>
+        <li><b>PIX:</b> confirmação de transferências bancárias, depósitos e PIX.</li>
+        <li><b>Inadimplência:</b> verificar inadimplência de clientes antes de recolher ou renovar.</li>
+        <li><b>PJs:</b> envio de todas as fichas manuais feitas para atendimentos de PJ em loja.</li>
+        <li><b>Avisos:</b> comunicações importantes.</li>
+        <li><b>Fichas:</b> solicitação de cadastro de clientes antigos da empresa.</li>
+      </ul>
+      <h3>Grupos relacionados a Estoque</h3>
+      <ul>
+        <li><b>Transferências:</b> digitalizar e inserir todas as NFs recebidas, conferidas e assinadas.</li>
+        <li><b>Alinhamento de Estoque:</b> solicitações de transformação de ativos, entradas e saídas de notas e produtos da White Martins, ajuste de lote e divergência de produtos.</li>
+        <li><b>Reposição de Estoque:</b> solicitações de produtos, com programação de 15 em 15 dias e envio realizado por transportadora.</li>
+      </ul>
+    `
+  },
+
+  /* ===================== RH ===================== */
+  {
+    id: "registro-ponto",
+    title: "Registro de Ponto Eletrônico",
+    category: "RH",
+    keywords: ["ponto eletronico","ponto eletrônico","registro de ponto","bater ponto",
+      "hora extra","autorizacao hora extra","autorização hora extra","intervalo de almoco","intervalo de almoço",
+      "tolerancia do ponto","tolerância do ponto"],
+    simple: "Resumindo: bata os 4 pontos do dia (entrada, saída pro almoço, volta do almoço, saída final), respeite a 1h de almoço, e peça autorização pra Karina (Pulmonair) ou Luiz Fernando (Oxigenar) se precisar ficar depois do horário com cliente em loja.",
+    html: `
+      <h3>Registro do Ponto Eletrônico</h3>
+      <p>É obrigatório realizar os 4 registros de ponto durante a jornada de trabalho:</p>
+      <ol>
+        <li>Entrada</li>
+        <li>Saída para almoço</li>
+        <li>Retorno do almoço</li>
+        <li>Saída ao final do expediente</li>
+      </ol>
+      <p>O intervalo de 1 hora de almoço é obrigatório e deve ser respeitado.</p>
+      <h3>Permanência após o horário</h3>
+      <p>Só é permitido permanecer na loja além do horário quando houver cliente em atendimento. Nesses casos, é obrigatório enviar a solicitação de autorização para:</p>
+      <ul>
+        <li>Karina (Pulmonair)</li>
+        <li>Luiz Fernando (Oxigenar)</li>
+      </ul>
+      <p>Use o modelo abaixo:</p>
+      <div class="note">
+        🕣 AUTORIZAÇÃO HORA EXTRA/AJUSTE HORA<br>
+        Data: 23/06/2026<br>
+        Horário: 18:00<br>
+        Motivo: Cliente em loja
+      </div>
+      <p>Existe uma tolerância de 10 minutos para o registro do ponto, mas ela serve apenas como margem para imprevistos — não é uma regra fixa.</p>
+    `
+  },
+  {
+    id: "epays-app-configuracoes-iniciais",
+    title: "Configurações Iniciais do App (Pontofopag/Epays)",
+    category: "RH",
+    keywords: ["configuracoes iniciais app","configurações iniciais app","baixar aplicativo pontofopag",
+      "instalar pontofopag","permissoes do app","permissões do app","primeiro acesso pontofopag",
+      "data e hora automatica","data e hora automática","fuso horario ponto","fuso horário ponto",
+      "app registrador de ponto"],
+    simple: "Resumindo: baixe o app Pontofopag na loja do seu celular, aceite a política de privacidade e permita câmera, localização e fotos/mídia. No primeiro acesso, use o CPF e a senha enviada pelo RH e crie uma nova senha. Se aparecer aviso de fuso horário, ative Data e Hora automática nas configurações do celular.",
+    html: `
+      <h3>Configurações Iniciais do Aplicativo</h3>
+      <h3>1. Baixar o aplicativo Pontofopag</h3>
+      <p>O download pode ser feito nas lojas de aplicativo, tanto iOS quanto Android (buscar por "Pontofopag - Registrador Digital de Ponto").</p>
+      <h3>2. Aceitar a Política de Privacidade</h3>
+      <p>Assim que abrir o aplicativo, aceite os termos de uso no ícone verde "Aceitar".</p>
+      <h3>3. Permissões</h3>
+      <ul>
+        <li><b>Câmera:</b> necessária para o Reconhecimento Facial.</li>
+        <li><b>Localização:</b> necessária para o controle dos locais de registro.</li>
+        <li><b>Fotos e Mídia:</b> necessária para o armazenamento do Reconhecimento Facial.</li>
+      </ul>
+      <h3>4. Primeiro acesso</h3>
+      <p>No primeiro acesso, informe o CPF e a senha enviada pelo RH e, em seguida, crie uma nova senha.</p>
+      <h3>5. Data e hora automática da rede</h3>
+      <p>Se aparecer o aviso "Não é permitido registro, configurar fuso horário como automático", vá até as Configurações do celular → Data e Hora, e ative a data e o horário automáticos da rede.</p>
+    `
+  },
+  {
+    id: "assinar-espelho-ponto",
+    title: "Assinar Espelho de Ponto (Epays)",
+    category: "RH",
+    keywords: ["assinar espelho ponto","assinar cartao ponto","assinar cartão ponto","cartao ponto epays",
+      "cartão ponto epays","aprovar espelho ponto","aprovar cartao ponto","aprovar cartão ponto"],
+    simple: "Resumindo: acesse o Epays (app.epays.com.br) com CPF e senha, vá em Cartão Ponto > Espelho Ponto, localize o cartão marcado como PENDENTE e desça até clicar em APROVAR.",
+    html: `
+      <h3>Como Assinar Eletronicamente o Cartão Ponto</h3>
+      <h3>1. Acessar o Epays</h3>
+      <p>Faça acesso com CPF e senha em <a href="https://app.epays.com.br" target="_blank">app.epays.com.br</a> e localize o menu: <b>Cartão Ponto → Espelho Ponto</b>.</p>
+      <h3>2. Assinando</h3>
+      <p>Localize o cartão e clique em <b>"PENDENTE"</b>. Em seguida, desça a tela até <b>"APROVAR"</b>.</p>
+    `
+  },
+  {
+    id: "justificar-ponto-epays",
+    title: "Justificativa de Ponto (Epays)",
+    category: "RH",
+    keywords: ["justificar ponto","justificativa de ponto","justificar falta","esqueci de bater o ponto",
+      "batida duplicada","ajuste de ponto epays","justificativa por periodo","justificativa por período",
+      "justificativa por dia","atestado medico ponto","atestado médico ponto"],
+    simple: "Resumindo: acesse o Epays, vá em Cartão Ponto > Justificar Falta, clique no ícone do olho e no dia a ser justificado. Escolha Período (pra ajustar ou remover uma marcação) ou Dia (pra afastamento completo, com anexo obrigatório). Você tem 4 minutos pra concluir e só pode justificar o dia anterior, nunca o dia atual ou futuro.",
+    html: `
+      <h3>Como Justificar Ponto no Epays</h3>
+      <h3>1. Acessar o Epays</h3>
+      <p>Faça acesso com CPF e senha em <a href="https://app.epays.com.br" target="_blank">app.epays.com.br</a> e localize o menu: <b>Cartão Ponto → Justificar Falta</b>.</p>
+      <h3>2. Realizando uma justificativa</h3>
+      <p>Clique no ícone do olho e, em seguida, no dia a ser justificado.</p>
+      <div class="note">IMPORTANTE: aguarde o dia seguinte para justificar o dia de hoje — o sistema não permite justificativa no mesmo dia ou em dias futuros.</div>
+      <div class="note">ATENÇÃO: você terá 4 minutos para realizar a justificativa. Se ultrapassar esse tempo, será direcionado para a tela de espelho ponto e perderá as ações feitas, tendo que começar de novo.</div>
+      <h3>Justificativa por Período</h3>
+      <p>Use quando esqueceu de bater o ponto em algum momento do dia, ou bateu em duplicidade e deseja desconsiderar.</p>
+      <ul>
+        <li><b>Desconsiderar/remover uma marcação:</b> clique em cima dela, preencha o motivo e salve.</li>
+        <li><b>Incluir/adicionar uma marcação:</b> clique no espaço a ser preenchido, digite o horário, inclua o motivo e salve.</li>
+        <li>Após inserir, ordene as batidas na sequência correta usando as flechas.</li>
+      </ul>
+      <div class="note">IMPORTANTE: é essencial reordenar as marcações na sequência correta em que foram realizadas, para que o RH receba na ordem certa e evite que a justificativa seja reprovada.</div>
+      <h3>Justificativa por Dia</h3>
+      <p>Use quando houve um afastamento pelo dia todo. Informe a ocorrência (ex.: Atestado Médico) e o motivo.</p>
+      <div class="note">Lembre-se: em casos de afastamento é obrigatório anexar o comprovante/declaração — imagem, PDF, Word ou Excel — clicando em "Anexar Arquivo". É possível inserir até 5 anexos por justificativa.</div>
+      <div class="note">ATENÇÃO: o botão "Salvar" só fica disponível depois de preencher todos os dados obrigatórios. Não é possível salvar uma justificativa em branco ou somente com um anexo.</div>
+      <h3>Após salvar</h3>
+      <p>O dia justificado ficará em amarelo e a justificativa vai para aprovação do Gestor/RH. Você será notificado a cada etapa da aprovação.</p>
+      <h3>3. Consultando a justificativa</h3>
+      <p>Enquanto estiver aguardando aprovação, consulte clicando novamente no dia justificado no espelho ponto. Se já tiver sido aprovada ou reprovada, acesse o menu <b>Fale com o RH → Solicitações</b>, onde fica a listagem de todas as justificativas e solicitações abertas.</p>
+    `
+  },
+  {
+    id: "epays-primeiro-acesso-unico",
+    title: "Primeiro Acesso ao Epays (Acesso Único)",
+    category: "RH",
+    keywords: ["primeiro acesso epays","acesso unico epays","acesso único epays","cadastrar senha epays",
+      "recuperar senha epays","esqueci minha senha epays","codigo de verificacao epays",
+      "código de verificação epays","validar contato epays","autodeclaracao de raca","autodeclaração de raça"],
+    simple: "Resumindo: acesse app.epays.com.br, aceite os cookies, informe seu CPF e valide um contato (e-mail ou SMS) com o código de 6 dígitos. Crie uma senha (4 a 11 dígitos), aceite a Política de Privacidade e preencha a autodeclaração de raça. Se errar a senha 3 vezes seguidas, o acesso fica bloqueado por 3 minutos.",
+    html: `
+      <h3>Primeiro Acesso ao Epays (Via Acesso Único)</h3>
+      <p>O Acesso Único direciona o usuário para o ambiente intermediário de acesso. Nessa modalidade, o usuário não cria uma senha nova — o acesso é feito com a mesma senha já existente, exceto no primeiro cadastro.</p>
+      <h3>1. Acesso e aceite de cookies</h3>
+      <p>Ao acessar <a href="https://app.epays.com.br" target="_blank">app.epays.com.br</a>, o sistema redireciona automaticamente para o Acesso Único e exibe o aviso de cookies. O aceite total não é obrigatório, mas é recomendado, pois facilita o reconhecimento do dispositivo.</p>
+      <h3>2. Identificação</h3>
+      <p>Informe o CPF (somente números). Estrangeiros sem CPF podem selecionar a opção correspondente e informar o país de origem e o ID.</p>
+      <h3>3. Verificação e validação de contato</h3>
+      <p>Etapa obrigatória, que garante a segurança da conta e a recuperação de acesso em caso de esquecimento de senha. Escolha receber o código de verificação por e-mail ou SMS (código numérico de 6 dígitos).</p>
+      <div class="note">Se você tiver dois contatos cadastrados, apenas um precisa ser validado obrigatoriamente — o segundo é opcional (pode usar "pular verificação"). Se não houver nenhum contato cadastrado, será necessário solicitar a atualização ao RH.</div>
+      <h3>4. Criação de senha</h3>
+      <p>Após confirmar o código, crie e confirme a nova senha: mínimo 4 dígitos, máximo 11 dígitos, e os dois campos precisam ser iguais.</p>
+      <h3>5. Políticas e autodeclaração</h3>
+      <p>No primeiro acesso ao Epays, é necessário aceitar a Política de Privacidade (role a barra até o final para habilitar o botão) e preencher a Autodeclaração de Raça, conforme a Lei 14.553/2023.</p>
+      <h3>Recuperação de senha</h3>
+      <p>Use a opção "Esqueci minha senha" na tela de acesso. Será exigida a validação de um contato (e-mail ou celular), com envio de um código de 6 dígitos.</p>
+      <div class="note">Após 3 tentativas incorretas de senha, o acesso fica bloqueado por 3 minutos. Em caso de dúvidas ou falhas na autenticação, acione o Canal de Suporte.</div>
+    `
+  },
+  {
+    id: "registro-ponto-offline",
+    title: "Registro de Ponto Offline (Pontofopag)",
+    category: "RH",
+    keywords: ["registro offline","batida offline","bater ponto sem internet","ponto sem internet",
+      "nsr nao confirmado","nsr não confirmado","numero de serie de registro","número de série de registro",
+      "sincronizar ponto offline"],
+    simple: "Resumindo: conecte numa rede pra fazer login com 'Manter Logado' marcado. Depois desative Wi-Fi e dados móveis e clique em Registrar — o ponto fica salvo no aparelho com NSR 'Não confirmado' até você reconectar à internet e abrir o app de novo, quando ele sincroniza.",
+    html: `
+      <h3>Como Registrar Ponto Offline</h3>
+      <h3>1. Conectar a uma rede</h3>
+      <p>O login no sistema deve ser feito com uma rede estável. Conecte-se à internet, acesse o app Pontofopag e faça login com CPF e senha, marcando a opção <b>Manter Logado</b>.</p>
+      <h3>2. Registrando</h3>
+      <p>Desative completamente o acesso à internet (Wi-Fi e dados móveis) e, no Pontofopag, clique em <b>Registrar</b>.</p>
+      <h3>3. NSR (Número de Série de Registro)</h3>
+      <p>O registro feito offline fica temporariamente invisível para o RH e para o Epays, por conta do NSR aparecer como "Não confirmado".</p>
+      <div class="note">Assim que o acesso à rede for reestabelecido, é preciso acessar o app novamente para que as batidas sincronizem e passem a constar no sistema.</div>
+    `
+  },
+  {
+    id: "treinamento-ferias",
+    title: "Férias — Regras, Fracionamento e Pagamento",
+    category: "RH",
+    keywords: ["ferias","férias","periodo aquisitivo","período aquisitivo","periodo concessivo","período concessivo",
+      "fracionamento de ferias","fracionamento de férias","vender ferias","vender férias","abono pecuniario",
+      "abono pecuniário","pagamento de ferias","pagamento de férias","1/3 constitucional","banco de horas ferias",
+      "banco de horas férias","emendar ferias com feriado","emendar férias com feriado"],
+    simple: "Resumindo: todo colaborador tem direito a 30 dias de férias a cada 12 meses trabalhados (período aquisitivo), que devem ser concedidos nos 12 meses seguintes (período concessivo). Dá pra fracionar em até 3 períodos (um deles com no mínimo 14 dias, os outros com no mínimo 5) e vender até 10 dias (1/3) como abono. O pagamento (salário + 1/3 + venda, se houver) deve sair até 2 dias antes do início das férias, com aviso de no mínimo 30 dias de antecedência.",
+    html: `
+      <h3>O que são férias e por que elas existem</h3>
+      <p>Direito garantido pela CLT (art. 129): todo colaborador tem direito a 30 dias de férias a cada 12 meses de trabalho. É um período de descanso remunerado, essencial para recuperar energia e manter a produtividade.</p>
+      <h3>Período aquisitivo x período concessivo</h3>
+      <ul>
+        <li><b>Período aquisitivo:</b> os 12 meses de trabalho que geram o direito às férias.</li>
+        <li><b>Período concessivo:</b> os 12 meses seguintes, dentro dos quais a empresa deve conceder as férias.</li>
+      </ul>
+      <p><b>Exemplo:</b> trabalhou de 01/04/2024 a 31/03/2025 (aquisitivo) → pode tirar férias até 31/03/2026 (concessivo).</p>
+      <h3>Fracionamento de férias</h3>
+      <p>Desde a Reforma Trabalhista (2017), as férias podem ser fracionadas em até 3 períodos, desde que um deles tenha no mínimo 14 dias corridos e os outros não sejam menores que 5 dias.</p>
+      <ul>
+        <li>✅ Válidos: 14+10+6, 14+5+11, 15+10+5, 20+10, 25+5</li>
+        <li>❌ Inválidos: 10+10+10, 14+4+12, 10+5+15</li>
+      </ul>
+      <h3>Venda de férias (abono pecuniário)</h3>
+      <p>É possível vender até 1/3 dos dias (art. 143 da CLT): em férias de 30 dias, o colaborador pode vender até 10 dias e descansar 20. A venda é opcional e precisa ser solicitada junto com o pedido de férias. O valor é pago junto com as férias, incluindo o 1/3 constitucional sobre os dias vendidos.</p>
+      <h3>Pagamento das férias</h3>
+      <p>O colaborador recebe o salário referente ao período + 1/3 constitucional + valor dos dias vendidos (se houver), até 2 dias antes do início das férias.</p>
+      <div class="note">No retorno das férias não há um novo pagamento imediato — o próximo salário vem no fechamento normal do mês. O ideal é se planejar financeiramente para esse intervalo.</div>
+      <h3>Dúvidas comuns</h3>
+      <ul>
+        <li><b>A empresa pode escolher a data das férias?</b> Sim, mas deve ouvir o colaborador e avisá-lo com no mínimo 30 dias de antecedência (art. 135 da CLT).</li>
+        <li><b>Posso sair de férias numa sexta-feira mesmo trabalhando sábado?</b> Não. As férias não podem começar nos dois dias que antecedem feriado ou repouso semanal (art. 134, §3º da CLT). Quem trabalha aos sábados deve iniciar as férias na segunda-feira.</li>
+        <li><b>Quando devo receber o pagamento das férias?</b> Até 2 dias antes do início do período de gozo (art. 145 da CLT).</li>
+        <li><b>Quais benefícios permanecem ativos durante as férias?</b> O plano de saúde permanece ativo. Vale-transporte e vale-refeição não são pagos durante as férias.</li>
+        <li><b>Posso tirar férias antes de completar 12 meses de trabalho?</b> Não, só após completar o período aquisitivo — exceção quando há acordo formal entre empresa e colaborador.</li>
+        <li><b>Quem tem banco de horas pode emendar com as férias?</b> Sim, desde que alinhado com o gestor e o RH. O banco de horas pode ser usado antes ou depois das férias, nunca no lugar delas.</li>
+        <li><b>Quem está afastado (licença maternidade, auxílio doença) perde o direito às férias?</b> Não perde, mas o período pode ser ajustado conforme o tempo de afastamento.</li>
+      </ul>
+      <h3>Dicas</h3>
+      <ul>
+        <li>Solicite suas férias com antecedência.</li>
+        <li>Organize suas demandas antes de sair.</li>
+        <li>Planeje a transferência de atividades, se necessário.</li>
+        <li>Faça um checklist final com sua liderança.</li>
+        <li>Desconecte-se e aproveite o descanso.</li>
+      </ul>
+    `
+  },
+  {
+    id: "registro-ponto-webapp",
+    title: "Registro de Ponto pelo WebApp (Computador)",
+    category: "RH",
+    keywords: ["registro webapp","registrar ponto pelo computador","webapp pontofopag","bater ponto no computador",
+      "registrador web","registro com senha webapp","consulta de bilhetes"],
+    simple: "Resumindo: acesse webapp.pontofopag.com.br, aceite a política de privacidade, faça login com CPF e senha (no primeiro acesso, peça a senha provisória ao RH) e clique em REGISTRAR embaixo do horário exibido. Depois de registrar, o comprovante aparece na tela.",
+    html: `
+      <h3>Registro com Senha — WebApp</h3>
+      <h3>1. Acessar o WebApp</h3>
+      <p>Acesse o Web Registrador pelo link <a href="https://webapp.pontofopag.com.br" target="_blank">webapp.pontofopag.com.br</a> e aceite a política de privacidade e uso de cookies.</p>
+      <h3>2. Login</h3>
+      <p>Utilize seu CPF e senha para fazer login. No primeiro acesso, solicite ao RH a senha provisória e realize a alteração de senha em seguida.</p>
+      <p>Clique no botão <b>REGISTRAR</b>, localizado embaixo do horário exato exibido na tela.</p>
+      <h3>3. Comprovante</h3>
+      <p>Após realizar o processo com sucesso, o comprovante de registro de ponto eletrônico aparece na tela, incluindo QR Code, NSR e data/hora. É possível consultar os bilhetes anteriores pelo ícone de Consulta de Bilhetes.</p>
+    `
+  },
+
+  /* ===================== PRODUTOS E FORNECEDORES ===================== */
+  {
+    id: "white-martins-oxigenar",
+    title: "White Martins — Oxigenar",
+    category: "Produtos e Fornecedores",
+    keywords: ["white martins","cilindro de oxigenio","cilindro de oxigênio","concentrador oxigenar",
+      "oxigenio domiciliar","oxigênio domiciliar","cilindro backup"],
+    simple: "Resumindo: em residência com escada, loca cilindro de 3,5 m³ (2 cilindros se precisar); sem concentrador da Oxigenar, sempre 2 cilindros (1 de backup); prazo de entrega é até 72h úteis; qualquer atendimento fora do padrão precisa de autorização da Vanessa.",
+    html: `
+      <h3>Solicitações White Martins — Oxigenar</h3>
+      <ul>
+        <li><b>Residência com escadas:</b> locar cilindro de 3,5 m³. Se necessário, locar 2 cilindros (2 locações + 2 cargas).</li>
+        <li><b>Sem concentrador da Oxigenar:</b> locar 2 cilindros — 2 locações + 2 cargas (o segundo cilindro é o backup).</li>
+        <li><b>Prazo de entrega:</b> informar sempre até 72h úteis.</li>
+        <li><b>Orientações:</b> enviar ao cliente as instruções de uso (PDF).</li>
+        <li><b>Entrega:</b> orientar o cliente a conferir se o cilindro está cheio no recebimento.</li>
+      </ul>
+      <div class="note">Qualquer atendimento fora do padrão precisa de autorização da Vanessa antes de prosseguir. Sempre que um atendimento fora do comum for autorizado, registre isso em Observação no pedido.</div>
+      <p><b>Dúvidas:</b> Vanessa, Bianca ou Vicent.</p>
+    `
+  },
+  {
+    id: "assistencia-tecnica-reserva",
+    title: "Assistência Técnica e Equipamento Reserva",
+    category: "Produtos e Fornecedores",
+    keywords: ["assistencia tecnica","assistência técnica","equipamento reserva","garantia do equipamento",
+      "frete assistencia tecnica","frete assistência técnica","equipamento de terceiro"],
+    simple: "Resumindo: equipamento comprado na Oxigenar e ainda na garantia tem reserva grátis; fora da garantia ou comprado de terceiros, a locação do reserva custa R$ 250. O frete só é cobrado se o cliente não aprovar o orçamento do conserto.",
+    html: `
+      <h3>Assistência Técnica e Equipamento Reserva</h3>
+      <h3>Equipamentos adquiridos com a Oxigenar</h3>
+      <ul>
+        <li><b>Durante a garantia:</b> a Oxigenar disponibiliza um equipamento reserva sem custo durante todo o período do reparo.</li>
+        <li><b>Após o término da garantia:</b> o equipamento pode ser encaminhado para assistência técnica, mas o cliente não tem direito ao empréstimo do reserva. Se precisar de um equipamento nesse período, é possível alugar por R$ 250,00.</li>
+      </ul>
+      <h3>Equipamentos adquiridos de terceiros</h3>
+      <p>Mesmo dentro do período de garantia, a Oxigenar não disponibiliza equipamento reserva para empréstimo. Se o cliente precisar de um equipamento enquanto o seu está em assistência técnica, pode alugá-lo por R$ 250,00.</p>
+      <h3>Frete para assistência técnica</h3>
+      <p>O frete de envio e devolução só é cobrado caso o cliente não aprove o orçamento do conserto. Se o orçamento for aprovado, os custos de frete ficam integralmente por conta da Oxigenar/Pulmonair, sem cobrança adicional ao cliente.</p>
+    `
+  },
+  {
+    id: "transferencia-pulmonair-oxigenar",
+    title: "Transferência Pulmonair ↔ Oxigenar",
+    category: "Produtos e Fornecedores",
+    keywords: ["transferencia entre empresas","transferência entre empresas","produto pulmonair oxigenar",
+      "venda pulmonair oxigenar","transferencia de estoque","transferência de estoque"],
+    simple: "Resumindo: toda venda ou transferência de produto da Pulmonair pela Oxigenar (ou vice-versa) precisa ser comunicada ao Anderson antes, já que ele é o responsável pelo estoque e cuida do trâmite correto.",
+    html: `
+      <h3>Produtos da Pulmonair para a Oxigenar (e vice-versa)</h3>
+      <p>Sempre que houver necessidade de realizar a venda ou transferência de um produto da Pulmonair pela Oxigenar, é obrigatório comunicar imediatamente o Anderson, para que ele execute os trâmites corretos.</p>
+      <div class="note">A transferência ou envio de equipamentos entre a Pulmonair e a Oxigenar, ou vice-versa, deve ser realizada exclusivamente pelo responsável pelo estoque (Anderson — Oxigenar Estoque).</div>
+      <p>Transferências realizadas fora desse processo têm gerado problemas e prejuízos financeiros para a empresa — por isso, siga sempre esse fluxo.</p>
+    `
+  }
+];
+
+/* ========================= DETECÇÃO DE INTENÇÃO ========================= */
+const CONFUSION_PATTERNS = [
+  "nao entendi","não entendi","nao entendo","não entendo","nao ficou claro","não ficou claro",
+  "explica de outro jeito","explica diferente","de outra forma","mais simples","nao captei",
+  "não captei","confuso","complicado","nao saquei","não saquei","resume","resumindo",
+  "pode simplificar","fica dificil","fica difícil","nao entendi nada","não entendi nada"
+];
+const GREETING_PATTERNS = ["oi","ola","olá","bom dia","boa tarde","boa noite","opa","eae","e ai","e aí"];
+const THANKS_PATTERNS = ["obrigado","obrigada","valeu","vlw","top obrigado","ajudou","show"];
+const ONLY_THIS_PATTERNS = ["so isso","só isso","e so isso","é só isso","isso mesmo","so isso mesmo",
+  "só isso mesmo","é isso","e isso","era so isso","era só isso","nada mais","so isso ai","só isso aí"];
+
+/* Variações de resposta, pra soar mais natural e menos repetitivo */
+const GREETING_REPLIES = [
+  "Oi! Eu sou o Oxibot 🤖 Pode perguntar sobre documentos e passo a passo de qualquer solicitação — locação, venda, recolhimento, higienização e outras.",
+  "Olá! Fico por aqui pra ajudar com as solicitações do dia a dia. Pode perguntar à vontade.",
+  "Oi, tudo bem? Me conta qual solicitação você está fazendo que eu te explico os documentos e o passo a passo."
+];
+const THANKS_REPLIES = [
+  "Disponha! Qualquer outra dúvida, é só chamar.",
+  "Fico feliz em ajudar! Se precisar de mais alguma coisa, estou por aqui.",
+  "Por nada! Sempre que precisar, é só perguntar."
+];
+const ONLY_THIS_REPLIES = [
+  "Sim, é isso mesmo! 😊 Posso ajudar com mais alguma coisa?",
+  "Isso aí, era só isso mesmo! Precisa de algo mais?",
+  "Exatamente! Se surgir outra dúvida, é só chamar."
+];
+const MISS_INTROS = [
+  "Ainda não tenho essa informação na minha base 🙁",
+  "Essa eu ainda não sei responder 🙁",
+  "Hmm, essa solicitação ainda não está cadastrada comigo 🙁"
+];
+
+function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+function normalize(str){
+  return str.toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+    .replace(/[^a-z0-9\s]/g," ")
+    .replace(/\s+/g," ").trim();
+}
+function matchesAny(qNorm, list){
+  return list.some(p => qNorm.includes(normalize(p)));
+}
+function scoreEntry(entry, queryNorm){
+  let score = 0;
+  for(const kw of entry.keywords){
+    const kwNorm = normalize(kw);
+    if(!kwNorm) continue;
+    if(queryNorm.includes(kwNorm)){
+      score += kwNorm.split(" ").length * 3;
+    } else {
+      const words = kwNorm.split(" ");
+      const hits = words.filter(w => w.length > 2 && queryNorm.includes(w)).length;
+      score += hits;
+    }
+  }
+  const titleNorm = normalize(entry.title);
+  titleNorm.split(" ").forEach(w=>{ if(w.length>3 && queryNorm.includes(w)) score += 1; });
+  return score;
+}
+function findAnswer(query){
+  const qNorm = normalize(query);
+  let best = null, bestScore = 0;
+  for(const entry of KNOWLEDGE_BASE){
+    const s = scoreEntry(entry, qNorm);
+    if(s > bestScore){ bestScore = s; best = entry; }
+  }
+  return bestScore >= 2 ? best : null;
+}
+
+/* ========================= ESTADO ========================= */
+let lastEntry = null;
+const AVATAR_DATA = document.querySelector(".avatar-img").src;
+
+/* ========================= INTERFACE ========================= */
+const messagesEl = document.getElementById("messages");
+const formEl = document.getElementById("form");
+const inputEl = document.getElementById("input");
+const topicsInner = document.getElementById("topicsInner");
+const sidebar = document.getElementById("sidebar");
+const overlay = document.getElementById("overlay");
+const menuBtn = document.getElementById("menuBtn");
+
+menuBtn.addEventListener("click", ()=>{ sidebar.classList.add("open"); overlay.classList.add("show"); });
+overlay.addEventListener("click", ()=>{ sidebar.classList.remove("open"); overlay.classList.remove("show"); });
+
+function renderTopics(){
+  const categories = new Map();
+  KNOWLEDGE_BASE.forEach(entry=>{
+    const cat = entry.category || "Solicitações e Documentos";
+    if(!categories.has(cat)) categories.set(cat, []);
+    categories.get(cat).push(entry);
+  });
+
+  categories.forEach((entries, cat)=>{
+    const h = document.createElement("h2");
+    h.textContent = cat;
+    topicsInner.appendChild(h);
+
+    entries.forEach(entry=>{
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "side-btn";
+      b.textContent = entry.title;
+      b.onclick = ()=>{ sidebar.classList.remove("open"); overlay.classList.remove("show"); ask(entry.title); };
+      topicsInner.appendChild(b);
+    });
+  });
+}
+renderTopics();
+
+function scrollDown(){ messagesEl.scrollTop = messagesEl.scrollHeight; }
+
+function timeNow(){
+  const d = new Date();
+  return d.getHours().toString().padStart(2,"0") + ":" + d.getMinutes().toString().padStart(2,"0");
+}
+
+function addUserMsg(text){
+  const row = document.createElement("div");
+  row.className = "row user";
+  row.innerHTML = `<div class="bubble-wrap">
+      <div class="bubble"></div>
+      <div class="timestamp">${timeNow()}</div>
+    </div>`;
+  row.querySelector(".bubble").textContent = text;
+  messagesEl.appendChild(row);
+  scrollDown();
+}
+
+function addBotBubble(innerHtml, kind){
+  const row = document.createElement("div");
+  row.className = "row " + (kind || "bot");
+  row.innerHTML = `<img class="mini-avatar" src="${AVATAR_DATA}" alt="Oxibot">
+    <div class="bubble-wrap">
+      <div class="bubble">${innerHtml}</div>
+      <div class="timestamp">Oxibot · ${timeNow()}</div>
+    </div>`;
+  messagesEl.appendChild(row);
+  scrollDown();
+}
+
+function greetingReply(){ addBotBubble(pick(GREETING_REPLIES)); }
+function thanksReply(){ addBotBubble(pick(THANKS_REPLIES)); }
+function onlyThisReply(){ addBotBubble(pick(ONLY_THIS_REPLIES)); }
+
+function confusionReply(){
+  if(lastEntry){
+    addBotBubble(`<span class="rephrase-tag">Explicando de outro jeito</span><br>${lastEntry.simple}`);
+  } else {
+    addBotBubble("Sem problema! Me diz qual solicitação você quer entender (ex: locação, venda, recolhimento) que eu explico com calma. Também dá pra abrir a lista de solicitações no menu ☰.");
+  }
+}
+
+function missReply(query){
+  const row = document.createElement("div");
+  row.className = "row miss";
+  row.innerHTML = `<img class="mini-avatar" src="${AVATAR_DATA}" alt="Oxibot">
+    <div class="bubble-wrap">
+      <div class="bubble">Hmm, essa solicitação ainda não está cadastrada comigo. 🙁<br>
+        Peça pra Pollyanna incluir essa informação na minha base.</div>
+      <div class="timestamp">Oxibot · ${timeNow()}</div>
+    </div>`;
+  messagesEl.appendChild(row);
+  scrollDown();
+}
+
+function showTyping(){
+  const row = document.createElement("div");
+  row.className = "row bot typing-row";
+  row.innerHTML = `<img class="mini-avatar" src="${AVATAR_DATA}" alt="Oxibot">
+    <div class="bubble-wrap"><div class="bubble"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></div></div>`;
+  messagesEl.appendChild(row);
+  scrollDown();
+  return row;
+}
+
+function ask(query){
+  if(!query.trim()) return;
+  addUserMsg(query);
+  inputEl.value = "";
+
+  const qNorm = normalize(query);
+  const typingRow = showTyping();
+
+  setTimeout(()=>{
+    typingRow.remove();
+    if(matchesAny(qNorm, GREETING_PATTERNS) && qNorm.split(" ").length <= 4){ greetingReply(); return; }
+    if(matchesAny(qNorm, THANKS_PATTERNS)){ thanksReply(); return; }
+    if(matchesAny(qNorm, ONLY_THIS_PATTERNS) && qNorm.split(" ").length <= 5){ onlyThisReply(); return; }
+    if(matchesAny(qNorm, CONFUSION_PATTERNS)){ confusionReply(); return; }
+
+    const match = findAnswer(query);
+    if(match){ lastEntry = match; addBotBubble(match.html); }
+    else{ missReply(query); }
+  }, 450);
+}
+
+formEl.addEventListener("submit", e=>{ e.preventDefault(); ask(inputEl.value); });
+
+greetingReply();
+</script>
+</body>
+</html>
