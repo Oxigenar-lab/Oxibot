@@ -332,12 +332,24 @@ const KNOWLEDGE_BASE = [
     id: "bonificacao-rep",
     title: "Bonificação",
     category: "Solicitações e Documentos",
-    keywords: ["bonificacao","bonificação","item bonificado","bonificar produto"],
-    simple: "Resumindo: descreva o motivo da bonificação e tire foto do item bonificado.",
+    keywords: ["bonificacao","bonificação","item bonificado","bonificar produto","venda com bonificacao",
+      "venda com bonificação","forms de bonificacao","forms de bonificação","ajustar valor bonificado",
+      "distribuir valor bonificacao","distribuir valor bonificação"],
+    simple: "Resumindo: descreva o motivo da bonificação e tire foto do item bonificado. Se for locação ou bonificação avulsa, o formulário é preenchido normalmente e sai em nota separada. Mas se for venda + bonificação juntas, não tem mais nota separada — o valor do item bonificado precisa ser distribuído entre os itens da própria venda no Forms.",
     html: `
       <h3>Bonificação</h3>
       <p><b>Documentos necessários:</b> motivo da bonificação e foto do(s) item(ns) bonificado(s).</p>
       <div class="note">${DOC_NOTE}</div>
+      <h3>Locação ou bonificação avulsa</h3>
+      <p>Preencha o Forms normalmente — a bonificação será feita em nota separada, como já acontece hoje.</p>
+      <h3>Venda + bonificação juntas</h3>
+      <p>Nesse caso, não será mais feita uma nota separada de bonificação — o item bonificado é incluído na própria nota de venda. Por isso, é obrigatório enviar no Forms os <b>valores já ajustados</b>, distribuindo o valor do item bonificado entre os demais itens da venda.</p>
+      <p>Exemplo: venda de CPAP (R$ 4.680,00) com um filtro bonificado.</p>
+      <ul>
+        <li>❌ Errado: CPAP R$ 4.680,00 / Filtro R$ 0,00</li>
+        <li>✅ Correto: CPAP R$ 4.660,00 / Filtro R$ 20,00</li>
+      </ul>
+      <div class="note">Os valores informados no Forms são utilizados exatamente como enviados — se estiverem incorretos, a nota também sai incorreta. Qualquer dúvida no ajuste, confirme antes de enviar.</div>
     `
   },
   {
@@ -345,14 +357,24 @@ const KNOWLEDGE_BASE = [
     title: "Renovação",
     category: "Solicitações e Documentos",
     keywords: ["renovacao","renovação","renovacao simples","renovação simples","renovacao upgrade",
-      "renovação upgrade","upgrade de plano","fidelidade"],
-    simple: "Resumindo: só precisa do comprovante de pagamento. Se o cliente ficar no mesmo plano ou for pra um com fidelidade menor, é renovação simples; se for pra um plano com fidelidade maior, é upgrade. O contrato você baixa na tela de Contratos.",
+      "renovação upgrade","upgrade de plano","fidelidade","natureza renovacao upgrade","natureza renovação upgrade",
+      "1060000","receita de locacao","receita de locação","natureza do contrato"],
+    simple: "Resumindo: só precisa do comprovante de pagamento. Se o cliente ficar no mesmo plano ou for pra um com fidelidade menor, é renovação simples; se for pra um plano com fidelidade maior, é upgrade — nesse caso, cadastre na tela de contratos com a natureza 1060000 - RENOVAÇÃO UPGRADE. Antes de imprimir o contrato, sempre confira se a natureza está certa: RECEITA DE LOCAÇÃO (novo plano), RENOVAÇÃO DE LOCAÇÃO (renovação) ou RENOVAÇÃO UPGRADE (renovação com upgrade).",
     html: `
       <h3>Renovação</h3>
       <p><b>Documento necessário:</b> comprovante de pagamento.</p>
       <ul>
-        <li><b>Renovação simples:</b> o cliente permanece no mesmo plano ou migra para um plano com fidelidade menor.</li>
-        <li><b>Renovação upgrade:</b> o cliente migra para um plano com fidelidade maior.</li>
+        <li><b>Renovação:</b> o cliente mantém o mesmo plano ou reduz o tempo de fidelidade (ex.: de semestral para trimestral, ou renovação do mesmo plano trimestral).</li>
+        <li><b>Upgrade de plano:</b> o cliente aumenta o tempo de fidelidade (ex.: de mensal para trimestral, ou de trimestral para anual).</li>
+      </ul>
+      <div class="note">No Forms de renovação, há uma pergunta obrigatória para identificar corretamente o tipo de solicitação (Renovação ou Upgrade de Plano) — selecione com atenção, pois isso impacta diretamente o cadastro do contrato.</div>
+      <h3>Natureza no cadastro do contrato</h3>
+      <p>Todo upgrade de plano deve ser cadastrado na tela de Contratos com a natureza <b>1060000 - RENOVAÇÃO UPGRADE</b>.</p>
+      <p>Antes de imprimir o contrato no sistema, confira obrigatoriamente se a natureza foi inserida corretamente:</p>
+      <ul>
+        <li>✔️ <b>RECEITA DE LOCAÇÃO</b> → novos planos</li>
+        <li>✔️ <b>RENOVAÇÃO DE LOCAÇÃO</b> → renovações</li>
+        <li>✔️ <b>RENOVAÇÃO UPGRADE</b> → renovações com upgrade</li>
       </ul>
       <p>Para baixar o contrato: na tela de Contratos, digite o nome do cliente, clique em Aplicar e, na seta ao lado da lupa de pesquisa, selecione "Contrato de Locação Fidelização".</p>
       <div class="note">${DOC_NOTE}</div>
@@ -431,13 +453,21 @@ const KNOWLEDGE_BASE = [
     id: "assistencia-garantia",
     title: "Assistência (Garantia ou Não)",
     category: "Solicitações e Documentos",
-    keywords: ["assistencia","assistência","garantia","equipamento em garantia","equipamento com defeito"],
-    simple: "Resumindo: só precisa de foto do equipamento. A coordenação cuida da inclusão no sistema.",
+    keywords: ["assistencia","assistência","garantia","equipamento em garantia","equipamento com defeito",
+      "fluxo de garantias","dreamstation fonte","fonte de alimentacao dreamstation","fonte de alimentação dreamstation",
+      "reportar garantia acessorio","reportar garantia acessório","marhuska"],
+    simple: "Resumindo: só precisa de foto do equipamento; a coordenação cuida da inclusão no sistema. Pra reportar o caso: equipamentos, umidificadores aquecidos, fontes e modems vão direto pra Assistência Técnica (atenção redobrada com fontes do DreamStation); os demais acessórios vão pra Marhuska (Coordenadora Comercial).",
     html: `
       <h3>Assistência — Equipamento do Cliente em Garantia ou Não</h3>
       <p><b>Documento necessário:</b> foto do equipamento.</p>
       <p>A coordenação emitirá a nota de inclusão do equipamento no sistema e enviará no seu privado.</p>
       <div class="note">${DOC_NOTE}</div>
+      <h3>Fluxo de garantias — para quem reportar</h3>
+      <ul>
+        <li><b>Equipamentos, umidificadores aquecidos, fontes e modems:</b> reportar diretamente à Assistência Técnica.</li>
+        <li><b>Demais acessórios</b> (que não sejam fontes, umidificadores aquecidos ou modems): reportar à Coordenadora Comercial, Marhuska.</li>
+      </ul>
+      <div class="note">Atenção especial ao DreamStation: por causa do aumento recente de casos de garantia em Fontes de Alimentação, todos os chamados (novos ou já informados antes) devem ser reportados/regularizados diretamente com a Assistência Técnica.</div>
     `
   },
   {
@@ -468,12 +498,16 @@ const KNOWLEDGE_BASE = [
     id: "plano-acompanhamento",
     title: "Plano de Acompanhamento",
     category: "Solicitações e Documentos",
-    keywords: ["plano de acompanhamento","acompanhamento do cliente"],
-    simple: "Resumindo: contrato manual preenchido, com o comprovante de pagamento anexado no formulário.",
+    keywords: ["plano de acompanhamento","acompanhamento do cliente","nao renovar plano de acompanhamento",
+      "não renovar plano de acompanhamento","cancelar plano de acompanhamento","vencimento plano de acompanhamento"],
+    simple: "Resumindo: contrato manual preenchido, com o comprovante de pagamento anexado no formulário. Se o cliente não for renovar, preencha o Forms de Recolhimento na hora — e monitore o vencimento com antecedência, sem esperar o cliente avisar.",
     html: `
       <h3>Plano de Acompanhamento</h3>
       <p>É necessário preencher o contrato manual e anexar o comprovante de pagamento no formulário.</p>
       <div class="note">${DOC_NOTE}</div>
+      <h3>Quando o cliente não for renovar</h3>
+      <p>Sempre que um Plano de Acompanhamento for finalizado e o cliente optar por <b>não renová-lo</b>, o representante comercial deve preencher imediatamente o <b>Forms de Recolhimento</b>. Esse procedimento é indispensável para que o Administrativo cancele o contrato, evitando cobranças indevidas e transtornos ao cliente.</p>
+      <div class="note">Monitore ativamente a vigência dos planos: não espere o cliente entrar em contato. O ideal é acompanhar as datas de término, fazer contato antecipado com o cliente e resolver a renovação ou o encerramento antes do vencimento.</div>
     `
   },
 
@@ -606,8 +640,10 @@ const KNOWLEDGE_BASE = [
     category: "Estoque e Sistema",
     keywords: ["consulta de produtos sankhya","consulta de series","consulta de séries","gerencia de produtos",
       "gerência de produtos","rastreabilidade por serie","rastreabilidade por série","rastreabilidade por lote",
-      "estoque do grupo oxigenar","numero de serie sankhya","número de série sankhya"],
-    simple: "Resumindo: a Consulta de Produtos mostra o estoque de todo o grupo Oxigenar por unidade. A Consulta de Séries rastreia produtos controlados por número de série (precisa ser idêntico ao cadastrado). A Gerência de Produtos rastreia por lote e mostra todos os clientes que compraram aquele produto, com telefone e e-mail.",
+      "estoque do grupo oxigenar","numero de serie sankhya","número de série sankhya",
+      "devolucao cliente pj","devolução cliente pj","conferir se equipamento e nosso","conferir se equipamento é nosso",
+      "recolhimento cliente pj","ficha manual pj"],
+    simple: "Resumindo: a Consulta de Produtos mostra o estoque de todo o grupo Oxigenar por unidade. A Consulta de Séries rastreia produtos controlados por número de série (precisa ser idêntico ao cadastrado). A Gerência de Produtos rastreia por lote e mostra todos os clientes que compraram aquele produto, com telefone e e-mail. Antes de receber qualquer devolução — principalmente de clientes PJ — sempre confira na Consulta de Séries se o equipamento é mesmo da Oxigenar.",
     html: `
       <h3>Tela Consulta de Produtos</h3>
       <p>Consulta o estoque de todo o Grupo Oxigenar. Pesquise pelo nome do produto e clique em modo coluna para visualizar as fotos. No campo "Detalhes de estoque" é possível verificar o estoque em todas as unidades do grupo.</p>
@@ -619,6 +655,58 @@ const KNOWLEDGE_BASE = [
         <li>Na aba <b>Parceiros</b>, é possível identificar todos os clientes que compraram o produto, com telefone e e-mail para contato.</li>
         <li>Na aba <b>Extrato</b>, informando o lote específico, é possível ver todos os movimentos daquele lote.</li>
       </ul>
+      <div class="note">IMPORTANTE: antes de receber qualquer equipamento em loja, consulte a tela de Consulta de Séries, informando o número de série, para confirmar que o equipamento é mesmo da Oxigenar. Faça essa conferência para todos os clientes — mas redobre a atenção com clientes PJ, já que em alguns casos o faturamento é feito por fora do Sankhya e o recolhimento é feito por ficha manual, sem o contrato já cadastrado no sistema.</div>
+    `
+  },
+
+  {
+    id: "sanitizacao-equipamentos-locacao",
+    title: "Sanitização de Equipamentos de Locação (Retorno)",
+    category: "Estoque e Sistema",
+    keywords: ["sanitizacao","sanitização","desinfeccao de equipamentos","desinfecção de equipamentos",
+      "form 043","form 037","formulario 043","formulário 043","formulario 037","formulário 037",
+      "produtos nao conformes","produtos não conformes","form 013","equipamento com avaria",
+      "limpeza equipamento locacao retorno","limpeza equipamento locação retorno"],
+    simple: "Resumindo: todo equipamento que retornar de locação passa por limpeza e preenchimento do formulário de sanitização (Form 043 na Oxigenar, Form 037 na Pulmonair). Se aprovado, dá entrada no estoque com o formulário preenchido; se tiver avaria, reprove a entrada e preencha o Form 013 (Produtos Não Conformes). O processo de envio para assistência técnica continua o mesmo de sempre.",
+    html: `
+      <h3>Sanitização e Desinfecção de Equipamentos de Locação</h3>
+      <p>Todo equipamento que retornar de locação deve passar por limpeza e pelo preenchimento do novo formulário de sanitização:</p>
+      <ul>
+        <li><b>Oxigenar:</b> Form 043</li>
+        <li><b>Pulmonair:</b> Form 037</li>
+      </ul>
+      <h3>Fluxo conforme o estado do equipamento</h3>
+      <ul>
+        <li><b>Equipamento aprovado:</b> dar entrada no estoque + preencher o formulário de sanitização.</li>
+        <li><b>Equipamento com avaria:</b> reprovar a entrada + preencher o Form 013 (Produtos Não Conformes).</li>
+      </ul>
+      <div class="note">Este processo se refere apenas à limpeza do equipamento. O processo de envio para assistência técnica permanece inalterado.</div>
+    `
+  },
+  {
+    id: "recebimento-mercadoria-assinaturas",
+    title: "Recebimento de Mercadoria e Assinaturas",
+    category: "Estoque e Sistema",
+    keywords: ["recebimento de mercadoria","conferencia de mercadoria","conferência de mercadoria",
+      "avaria na entrega","divergencia na entrega","divergência na entrega","assinar canhoto",
+      "assinatura de documento entrega","assinar por outra unidade","cuidados ao receber mercadoria"],
+    simple: "Resumindo: confira quantidade, qualidade e integridade da mercadoria contra a nota fiscal e o canhoto antes de assinar; registre avarias ou divergências na hora, com fotos se precisar. Só assine depois de conferir tudo, nunca deixe terceiros assinarem sem autorização, guarde uma cópia — e jamais assine documento de outra unidade.",
+    html: `
+      <h3>Cuidados no Recebimento de Mercadoria</h3>
+      <h3>Conferência da mercadoria</h3>
+      <ul>
+        <li>Verifique quantidade, qualidade e integridade dos produtos.</li>
+        <li>Compare com a nota fiscal, os volumes e o canhoto da transportadora.</li>
+        <li>Caso haja avarias ou divergências, registre imediatamente no comprovante de entrega.</li>
+        <li>Tire fotos como evidência, se necessário.</li>
+      </ul>
+      <h3>Assinaturas</h3>
+      <ul>
+        <li>Assine somente após a conferência completa.</li>
+        <li>Não permita que terceiros assinem sem autorização.</li>
+        <li>Guarde uma cópia do documento assinado.</li>
+      </ul>
+      <div class="note">🚨 Jamais assine documentos por outra unidade.</div>
     `
   },
 
@@ -666,8 +754,10 @@ const KNOWLEDGE_BASE = [
     category: "Financeiro",
     keywords: ["link de pagamento","link de recorrencia","link de recorrência","solicitar link",
       "cancelar recorrencia","cancelar recorrência","cancelamento de recorrencia","cancelamento de recorrência",
-      "codigo do link","código do link"],
-    simple: "Resumindo: tem dois tipos de link — pagamento único (venda ou locação) e recorrência (só para locação mensal). Peça no grupo do WhatsApp certo (Link - Oxigenar ou Link - Pulmonair) informando tipo, descrição, valor e parcelas.",
+      "codigo do link","código do link","pix via link","link de pix","chave pix cliente","confirmar pagamento pix",
+      "confirmacao de link","confirmação de link","link unico locacao mensal","link único locação mensal",
+      "varios equipamentos mesmo cliente","vários equipamentos mesmo cliente"],
+    simple: "Resumindo: tem dois tipos de link — pagamento único (venda ou locação) e recorrência (só para locação mensal). Peça no grupo do WhatsApp certo (Link - Oxigenar ou Link - Pulmonair) informando tipo, descrição, valor e parcelas. PIX à distância agora é sempre por link (não envie mais chave PIX). Se o cliente alugar mais de um equipamento no mesmo plano mensal, envie um único link com o valor total, não um link por item.",
     html: `
       <h3>Links de Pagamento</h3>
       <p>Existem dois tipos de link:</p>
@@ -684,6 +774,15 @@ const KNOWLEDGE_BASE = [
         <li>Número de parcelas (no caso de link de pagamento)</li>
       </ul>
       <div class="note">A aprovação do link sempre vem acompanhada de um código, que deve ser inserido na planilha da unidade.</div>
+      <h3>PIX à distância — sempre via link</h3>
+      <p>Todo cliente que precisar fazer um PIX à distância deve receber o <b>link de PIX</b>, e não mais a chave PIX. Solicite o link no valor exato do pagamento no grupo de Link, para que seja gerado e enviado ao cliente.</p>
+      <div class="note">Por enquanto a chave PIX ainda funciona para clientes que já a tiverem salva, mas ela será desativada futuramente. Já comece a orientar os clientes sobre essa mudança.</div>
+      <h3>Confirmação do pagamento</h3>
+      <p>Depois que o cliente realizar o pagamento (de qualquer tipo de link, não só PIX), puxe a mensagem no grupo onde o link foi enviado e solicite a confirmação, informando o <b>código do link utilizado</b>.</p>
+      <div class="note">O código fica no final do endereço do link, após a última barra ("/"). Exemplo: em https://www.userede.com.br/pagamentos/pt/di1379emm, o código é <b>di1379emm</b>.</div>
+      <h3>Planos mensais — link único por cliente</h3>
+      <p>Todo plano mensal deve ser feito via recorrência. Se o cliente alugar mais de um equipamento no mesmo plano mensal, envie apenas <b>um link com o valor total</b> da locação — nunca links separados por item.</p>
+      <p>Exemplo: cilindro portátil (R$ 210,00) + concentrador (R$ 390,00) = um único link de <b>R$ 600,00/mês</b>. Se o cliente devolver um dos itens depois, o valor da recorrência pode ser ajustado normalmente.</p>
       <h3>Pontos de atenção — recorrência</h3>
       <p>Como o pagamento é automático, é preciso avisar o Setor Administrativo imediatamente no grupo de Link para cancelar a recorrência assim que o cliente devolver o equipamento em loja — isso evita um possível estorno. No momento da aplicação, avise também o cliente sobre esse detalhe, para que ele sinalize caso vá devolver com atraso, permitindo adiar a data da recorrência.</p>
       <h3>Cancelamento de recorrência</h3>
@@ -726,6 +825,25 @@ const KNOWLEDGE_BASE = [
     `
   },
 
+  {
+    id: "reembolso-uber-99",
+    title: "Reembolso de Uber/99",
+    category: "Financeiro",
+    keywords: ["reembolso uber","reembolso 99","recibo uber","recibo 99","reembolso de viagem",
+      "reembolso corrida","print da corrida"],
+    simple: "Resumindo: pedidos de reembolso de Uber ou 99 precisam vir com o recibo emitido pelo próprio aplicativo — não são aceitos prints ou fotos da tela da corrida.",
+    html: `
+      <h3>Reembolso de Viagens (Uber/99)</h3>
+      <p>Os pedidos de reembolso de viagens realizadas por Uber ou 99 devem ser enviados acompanhados do <b>recibo emitido pelo próprio aplicativo</b>.</p>
+      <div class="note">Não são aceitos prints da tela da corrida nem fotos da tela do celular.</div>
+      <p>Como gerar o recibo em cada aplicativo:</p>
+      <ul>
+        <li><b>Uber:</b> <a href="https://help.uber.com/pt-BR/riders/article/como-obter-um-recibo-de-viagem-?nodeId=846f6cad-6f27-492a-9e0b-d2f056e1298e" target="_blank">help.uber.com — como obter um recibo de viagem</a></li>
+        <li><b>99:</b> <a href="https://99app.com/ajuda/passageiro/como-solicito-um-recibo/" target="_blank">99app.com — como solicito um recibo</a></li>
+      </ul>
+    `
+  },
+
   /* ===================== COMUNICAÇÃO INTERNA ===================== */
   {
     id: "grupos-whatsapp",
@@ -754,6 +872,20 @@ const KNOWLEDGE_BASE = [
         <li><b>Alinhamento de Estoque:</b> solicitações de transformação de ativos, entradas e saídas de notas e produtos da White Martins, ajuste de lote e divergência de produtos.</li>
         <li><b>Reposição de Estoque:</b> solicitações de produtos, com programação de 15 em 15 dias e envio realizado por transportadora.</li>
       </ul>
+    `
+  },
+  {
+    id: "clube-qrcode-contato",
+    title: "Clube — QR Code de Contato",
+    category: "Comunicação Interna",
+    keywords: ["clube qr code","qr code do clube","salvar contato do clube","contato da ana",
+      "whatsapp do clube","escanear qr code cliente"],
+    simple: "Resumindo: todo Clube fechado, peça para o cliente escanear o QR Code do telefone do Clube (ele salva o contato oficial no WhatsApp). Também envie o contato para todos os clientes do Clube e oriente que salvem o número da Ana e iniciem uma conversa com ela.",
+    html: `
+      <h3>Clube — QR Code de Contato Oficial</h3>
+      <p>Imprima (e, se possível, plastifique) o QR Code do telefone do Clube. Todo Clube fechado, peça para o cliente escanear esse QR Code — ele será direcionado ao WhatsApp para salvar o contato oficial do Clube no celular.</p>
+      <div class="note">Envie esse contato também para todos os clientes já ativos do Clube, orientando que salvem o número da Ana e iniciem uma conversa com ela. Como ela atende muitas pessoas diariamente, isso ajuda a evitar restrições na conta do WhatsApp e mantém a comunicação estável com os clientes.</div>
+      <p>O arquivo com a imagem do QR Code é enviado pela coordenação — assim que aplicar essa orientação com os clientes, confirme a conclusão no grupo.</p>
     `
   },
 
@@ -988,18 +1120,46 @@ const KNOWLEDGE_BASE = [
     title: "White Martins — Oxigenar",
     category: "Produtos e Fornecedores",
     keywords: ["white martins","cilindro de oxigenio","cilindro de oxigênio","concentrador oxigenar",
-      "oxigenio domiciliar","oxigênio domiciliar","cilindro backup"],
-    simple: "Resumindo: em residência com escada, loca cilindro de 3,5 m³ (2 cilindros se precisar); sem concentrador da Oxigenar, sempre 2 cilindros (1 de backup); prazo de entrega é até 72h úteis; qualquer atendimento fora do padrão precisa de autorização da Vanessa.",
+      "oxigenio domiciliar","oxigênio domiciliar","cilindro backup","armazem","armazém",
+      "qual empresa solicitar cilindro","termo de responsabilidade cilindro","cilindro 4m3","cilindro 4 m3",
+      "so cilindro sem concentrador","só cilindro sem concentrador"],
+    simple: "Resumindo: solicite à White Martins quando for cilindro domiciliar + concentrador (ou outros equipamentos) e para equipamentos de BASE; solicite ao Armazém quando for só cilindro domiciliar ou só cilindro portátil (ou se o paciente retirar o concentrador em loja). Confira a empresa do paciente na aba Contrato do Sankhya, pelo nome do equipamento. Padrão é cilindro + concentrador (garante backup); só 1 cilindro sozinho exige termo de responsabilidade assinado e vai para o Armazém. Em residência com escadas, cilindro de 4 m³. Prazo de entrega: até 72h úteis. Atendimento fora do padrão precisa de autorização da Liderança, registrada em Observação.",
     html: `
-      <h3>Solicitações White Martins — Oxigenar</h3>
+      <h3>Qual empresa solicitar?</h3>
       <ul>
-        <li><b>Residência com escadas:</b> locar cilindro de 3,5 m³. Se necessário, locar 2 cilindros (2 locações + 2 cargas).</li>
-        <li><b>Sem concentrador da Oxigenar:</b> locar 2 cilindros — 2 locações + 2 cargas (o segundo cilindro é o backup).</li>
-        <li><b>Prazo de entrega:</b> informar sempre até 72h úteis.</li>
-        <li><b>Orientações:</b> enviar ao cliente as instruções de uso (PDF).</li>
-        <li><b>Entrega:</b> orientar o cliente a conferir se o cilindro está cheio no recebimento.</li>
+        <li><b>WHITE MARTINS:</b>
+          <ul>
+            <li>Cilindro domiciliar + concentrador</li>
+            <li>Cilindro domiciliar + cilindro portátil + concentrador</li>
+            <li>Cilindro domiciliar + concentrador + outros equipamentos</li>
+            <li>Equipamentos para BASE (lojas Oxigenar)</li>
+          </ul>
+        </li>
+        <li><b>ARMAZÉM:</b>
+          <ul>
+            <li>Somente cilindro domiciliar</li>
+            <li>Somente cilindro portátil</li>
+          </ul>
+        </li>
       </ul>
-      <div class="note">Qualquer atendimento fora do padrão precisa de autorização da Vanessa antes de prosseguir. Sempre que um atendimento fora do comum for autorizado, registre isso em Observação no pedido.</div>
+      <p>Caso o paciente retire o concentrador em loja, solicite o cilindro para o Armazém.</p>
+      <h3>Como identificar de qual empresa é o paciente</h3>
+      <p>Na aba Contrato do Sankhya, acesse o campo produto: o nome do equipamento especifica a empresa.</p>
+      <ul>
+        <li>Exemplo White Martins: <i>WM CONCENTRADOR YUWELL</i></li>
+        <li>Exemplo Armazém: <i>ARMAZEM CILINDRO DOMICILIAR</i></li>
+      </ul>
+      <h3>Regras importantes</h3>
+      <ul>
+        <li><b>Locação somente de cilindro, sem concentrador:</b> informe ao cliente a importância de ter um backup por segurança. Caso o paciente queira apenas 1 cilindro domiciliar ou 1 cilindro portátil, ele deve assinar o <b>termo de responsabilidade</b>, e a solicitação deve ser feita para o Armazém.</li>
+        <li><b>Padrão:</b> cilindro domiciliar + concentrador, garantindo o backup de oxigênio.</li>
+        <li><b>Residência com escadas:</b> solicitar cilindro de <b>4 m³</b>. Se necessário, solicitar 2 cilindros (2 locações + 2 cargas).</li>
+        <li><b>Prazo de entrega:</b> informar sempre até 72 horas úteis.</li>
+        <li><b>Recebimento:</b> orientar o cliente a conferir se o cilindro está cheio no momento da entrega.</li>
+      </ul>
+      <h3>Atendimento fora do padrão</h3>
+      <div class="note">É obrigatória a autorização da Liderança antes de prosseguir. No campo Observação do pedido, informe quem autorizou, o que foi autorizado e demais informações relevantes.</div>
+      <div class="note">Preencha todas as informações corretamente — dados incompletos podem atrasar o atendimento.</div>
       <p><b>Dúvidas:</b> Vanessa, Bianca ou Vicent.</p>
     `
   },
