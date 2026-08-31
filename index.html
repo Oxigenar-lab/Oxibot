@@ -1413,6 +1413,7 @@ function matchesAny(qNorm, list){
   return list.some(p => qNorm.includes(normalize(p)));
 }
 function scoreEntry(entry, queryNorm){
+  const queryWords = queryNorm.split(" ").filter(Boolean);
   let score = 0;
   for(const kw of entry.keywords){
     const kwNorm = normalize(kw);
@@ -1421,12 +1422,12 @@ function scoreEntry(entry, queryNorm){
       score += kwNorm.split(" ").length * 3;
     } else {
       const words = kwNorm.split(" ");
-      const hits = words.filter(w => w.length > 2 && queryNorm.includes(w)).length;
+      const hits = words.filter(w => w.length > 2 && queryWords.includes(w)).length;
       score += hits;
     }
   }
   const titleNorm = normalize(entry.title);
-  titleNorm.split(" ").forEach(w=>{ if(w.length>3 && queryNorm.includes(w)) score += 1; });
+  titleNorm.split(" ").forEach(w=>{ if(w.length>3 && queryWords.includes(w)) score += 1; });
   return score;
 }
 function findAnswer(query){
