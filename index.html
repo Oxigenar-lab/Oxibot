@@ -532,7 +532,7 @@ const DOC_NOTE = 'Colete a assinatura do cliente, digitalize o documento, envie 
 
 // Data da última atualização de conteúdo na base — ajuste manualmente sempre
 // que editar, adicionar ou corrigir alguma solicitação do KNOWLEDGE_BASE.
-const OXIBOT_LAST_UPDATED = "07/09/2026";
+const OXIBOT_LAST_UPDATED = "09/09/2026";
 
 const KNOWLEDGE_BASE = [
   {
@@ -708,27 +708,6 @@ const KNOWLEDGE_BASE = [
       <p>O Setor Administrativo emitirá a nova remessa e dará baixa na remessa do equipamento antigo. Você deverá imprimir a nova remessa e a ficha de recolhimento do equipamento antigo.</p>
       <p>Para extrair a nota: acesse o Portal de Vendas, digite o nome do cliente e selecione a NF.</p>
       <div class="note">${DOC_NOTE}</div>
-    `
-  },
-  {
-    id: "assistencia-garantia",
-    title: "Assistência (Garantia ou Não)",
-    category: "Solicitações e Documentos",
-    keywords: ["assistencia","assistência","garantia","equipamento em garantia","equipamento com defeito",
-      "fluxo de garantias","dreamstation fonte","fonte de alimentacao dreamstation","fonte de alimentação dreamstation",
-      "reportar garantia acessorio","reportar garantia acessório","marhuska"],
-    simple: "Resumindo: só precisa de foto do equipamento; o Setor Administrativo cuida da inclusão no sistema. Pra reportar o caso: equipamentos, umidificadores aquecidos, fontes e modems vão direto pra Assistência Técnica (atenção redobrada com fontes do DreamStation); os demais acessórios vão pra Marhuska (Coordenadora Comercial).",
-    html: `
-      <h3>Assistência — Equipamento do Cliente em Garantia ou Não</h3>
-      <p><b>Documento necessário:</b> foto do equipamento.</p>
-      <p>O Setor Administrativo emitirá a nota de inclusão do equipamento no sistema e enviará no seu privado.</p>
-      <div class="note">${DOC_NOTE}</div>
-      <h3>Fluxo de garantias — para quem reportar</h3>
-      <ul>
-        <li><b>Equipamentos, umidificadores aquecidos, fontes e modems:</b> reportar diretamente à Assistência Técnica.</li>
-        <li><b>Demais acessórios</b> (que não sejam fontes, umidificadores aquecidos ou modems): reportar à Coordenadora Comercial, Marhuska.</li>
-      </ul>
-      <div class="note">Atenção especial ao DreamStation: por causa do aumento recente de casos de garantia em Fontes de Alimentação, todos os chamados (novos ou já informados antes) devem ser reportados/regularizados diretamente com a Assistência Técnica.</div>
     `
   },
   {
@@ -1150,6 +1129,7 @@ const KNOWLEDGE_BASE = [
   },
   {
     id: "clube-qrcode-contato",
+    updatedAt: "2026-09-09",
     title: "Clube do CPAP — QR Code Oficial de Boas-Vindas",
     category: "Comunicação Interna",
     keywords: ["clube qr code","qr code do clube","clube do cpap","salvar contato do clube","contato da ana",
@@ -1394,6 +1374,7 @@ const KNOWLEDGE_BASE = [
   },
   {
     id: "gerador-recibo-vale-transporte",
+    updatedAt: "2026-09-09",
     title: "Gerador de Recibo de Vale-Transporte (PDF)",
     category: "RH",
     keywords: ["vale transporte","vale-transporte","recibo de vale transporte","recibo vt","gerar recibo vt",
@@ -1495,26 +1476,6 @@ const KNOWLEDGE_BASE = [
     `
   },
   {
-    id: "assistencia-tecnica-reserva",
-    title: "Assistência Técnica e Equipamento Reserva",
-    category: "Produtos e Fornecedores",
-    keywords: ["assistencia tecnica","assistência técnica","equipamento reserva","garantia do equipamento",
-      "frete assistencia tecnica","frete assistência técnica","equipamento de terceiro"],
-    simple: "Resumindo: equipamento comprado na Oxigenar e ainda na garantia tem reserva grátis; fora da garantia ou comprado de terceiros, a locação do reserva custa R$ 250. O frete só é cobrado se o cliente não aprovar o orçamento do conserto.",
-    html: `
-      <h3>Assistência Técnica e Equipamento Reserva</h3>
-      <h3>Equipamentos adquiridos com a Oxigenar</h3>
-      <ul>
-        <li><b>Durante a garantia:</b> a Oxigenar disponibiliza um equipamento reserva sem custo durante todo o período do reparo.</li>
-        <li><b>Após o término da garantia:</b> o equipamento pode ser encaminhado para assistência técnica, mas o cliente não tem direito ao empréstimo do reserva. Se precisar de um equipamento nesse período, é possível alugar por R$ 250,00.</li>
-      </ul>
-      <h3>Equipamentos adquiridos de terceiros</h3>
-      <p>Mesmo dentro do período de garantia, a Oxigenar não disponibiliza equipamento reserva para empréstimo. Se o cliente precisar de um equipamento enquanto o seu está em assistência técnica, pode alugá-lo por R$ 250,00.</p>
-      <h3>Frete para assistência técnica</h3>
-      <p>O frete de envio e devolução só é cobrado caso o cliente não aprove o orçamento do conserto. Se o orçamento for aprovado, os custos de frete ficam integralmente por conta da Oxigenar/Pulmonair, sem cobrança adicional ao cliente.</p>
-    `
-  },
-  {
     id: "transferencia-pulmonair-oxigenar",
     title: "Transferência Pulmonair ↔ Oxigenar",
     category: "Produtos e Fornecedores",
@@ -1534,7 +1495,7 @@ const KNOWLEDGE_BASE = [
     title: "ResMed — Frente de Serviço (Visão Geral do Processo)",
     category: "Produtos e Fornecedores",
     keywords: ["resmed garantia","frente de servico resmed","frente de serviço resmed","ponto de coleta resmed",
-      "assistencia tecnica resmed","assistência técnica resmed","arkmeds","ordem de servico resmed",
+      "assistencia tecnica resmed","assistência técnica resmed","ordem de servico resmed",
       "ordem de serviço resmed","fluxo de garantia resmed","equipamento em garantia resmed",
       "cpap bipap ventilador garantia"],
     simple: "Resumindo: as unidades da Assistência Técnica Oxigenar são pontos de coleta oficiais para qualquer equipamento ResMed em garantia (CPAP, BiPAP, ventilador e acessórios), não importa onde foi comprado no Brasil. O fluxo geral é: recebe o equipamento na loja, identifica o tipo de parceiro, confere a documentação, emite o termo de coleta e abre a OS no Arkmeds — daí a transportadora recolhe e leva até a Assistência Técnica central, que faz o reparo e devolve pelo mesmo caminho.",
@@ -1689,6 +1650,135 @@ const KNOWLEDGE_BASE = [
         <li><b>Gestão/Supervisão da Assistência Técnica:</b> qualificação e avaliação das transportadoras, definição de SLAs por rota, tratamento de ocorrências logísticas e atualização deste processo.</li>
       </ul>
       <div class="note">Em caso de dúvida sobre a responsabilidade por uma etapa específica não coberta acima, acione a Gestão/Supervisão da Assistência Técnica Oxigenar para definição e registro do responsável.</div>
+    `
+  },
+
+  /* ===================== ASSISTÊNCIA TÉCNICA ===================== */
+  {
+    id: "assistencia-garantia",
+    updatedAt: "2026-09-09",
+    title: "Assistência (Garantia ou Não) — Procedimento de Solicitação",
+    category: "Assistência Técnica",
+    keywords: ["garantia","equipamento em garantia","equipamento com defeito",
+      "fluxo de garantias","dreamstation fonte","fonte de alimentacao dreamstation","fonte de alimentação dreamstation",
+      "reportar garantia acessorio","reportar garantia acessório","marhuska","procedimento de solicitacao de assistencia",
+      "procedimento de solicitação de assistência","checklist assistencia tecnica","check-list assistencia tecnica",
+      "chamado arkmeds","solicitacao at","solicitação at","cadastro previo de clientes","numero de serie assistencia",
+      "número de série assistência"],
+    simple: "Resumindo: precisa de foto do equipamento com o número de série visível; o Setor Administrativo cuida da inclusão no sistema. Pra reportar garantia: equipamentos, umidificadores aquecidos, fontes e modems vão pra Assistência Técnica; os demais acessórios vão pra Marhuska. O fluxo de abertura passa por 4 etapas: check-list, tipo de assistência, cadastro prévio e chamado no Arkmeds.",
+    html: `
+      <h3>Assistência — Equipamento do Cliente em Garantia ou Não</h3>
+      <p><b>Documento necessário:</b> foto do equipamento, com o número de série visível.</p>
+      <p>O Setor Administrativo emitirá a nota de inclusão do equipamento no sistema e enviará no seu privado.</p>
+      <div class="note">${DOC_NOTE}</div>
+      <h3>Fluxo de garantias — para quem reportar</h3>
+      <ul>
+        <li><b>Equipamentos, umidificadores aquecidos, fontes e modems:</b> reportar diretamente à Assistência Técnica.</li>
+        <li><b>Demais acessórios</b> (que não sejam fontes, umidificadores aquecidos ou modems): reportar à Coordenadora Comercial, Marhuska.</li>
+      </ul>
+      <div class="note">Atenção especial ao DreamStation: por causa do aumento recente de casos de garantia em Fontes de Alimentação, todos os chamados (novos ou já informados antes) devem ser reportados/regularizados diretamente com a Assistência Técnica.</div>
+      <h3>Procedimento de Solicitação de Assistência Técnica</h3>
+      <p>O fluxo de abertura de um chamado passa por 4 etapas:</p>
+      <ul>
+        <li><b>Preparação do Check-list:</b> manutenção corretiva, higienização ou retorno de locação.</li>
+        <li><b>Assistência (equipamento de cliente em garantia ou não):</b> solicitações comerciais.</li>
+        <li><b>Cadastro prévio de clientes e equipamentos:</b> envio para a assistência técnica (Solicitação AT).</li>
+        <li><b>Chamado Arkmeds:</b> aberto pelo Portal Online.</li>
+      </ul>
+      <div class="note">O formulário de solicitações comerciais exige o SN (número de série) do equipamento em assistência e, se houver empréstimo ou locação de um segundo equipamento, o SN dele também — com foto do equipamento mostrando o número de série.</div>
+      <h3>O que o cliente assina no final</h3>
+      <p>Check-list, pedido de assistência e contrato de locação (quando houver). Todos os documentos devem ser inseridos no grupo de digitalização e anexados no Sankhya em seus respectivos portais.</p>
+    `
+  },
+  {
+    id: "assistencia-tecnica-reserva",
+    updatedAt: "2026-09-09",
+    title: "Equipamento Reserva e Frete da Assistência Técnica",
+    category: "Assistência Técnica",
+    keywords: ["equipamento reserva","garantia do equipamento",
+      "frete assistencia tecnica","frete assistência técnica","equipamento de terceiro","contrato de locacao reserva",
+      "contrato de locação reserva"],
+    simple: "Resumindo: equipamento comprado na Oxigenar e ainda na garantia tem reserva grátis; fora da garantia ou comprado de terceiros, a locação do reserva custa R$ 250. Se for reserva sem custo, o cliente só assina o contrato pra retirar; se for alugado, precisa pagar antes e imprimir o contrato pra retirar. O frete só é cobrado se o cliente não aprovar o orçamento do conserto.",
+    html: `
+      <h3>Equipamento Reserva</h3>
+      <h3>Equipamentos adquiridos com a Oxigenar</h3>
+      <ul>
+        <li><b>Durante a garantia:</b> a Oxigenar disponibiliza um equipamento reserva sem custo durante todo o período do reparo.</li>
+        <li><b>Após o término da garantia:</b> o equipamento pode ser encaminhado para assistência técnica, mas o cliente não tem direito ao empréstimo do reserva. Se precisar de um equipamento nesse período, é possível alugar por R$ 250,00.</li>
+      </ul>
+      <h3>Equipamentos adquiridos de terceiros</h3>
+      <p>Mesmo dentro do período de garantia, a Oxigenar não disponibiliza equipamento reserva para empréstimo. Se o cliente precisar de um equipamento enquanto o seu está em assistência técnica, pode alugá-lo por R$ 250,00.</p>
+      <h3>Contrato de locação do equipamento reserva</h3>
+      <ul>
+        <li><b>Reserva (sem custo):</b> o contrato de locação não tem custo, mas o cliente precisa assinar para retirar o segundo equipamento.</li>
+        <li><b>Alugado:</b> após o pagamento efetuado, imprima o contrato de locação para o cliente retirar o segundo equipamento.</li>
+      </ul>
+      <h3>Frete para assistência técnica</h3>
+      <p>O frete de envio e devolução só é cobrado caso o cliente não aprove o orçamento do conserto. Se o orçamento for aprovado, os custos de frete ficam integralmente por conta da Oxigenar/Pulmonair, sem cobrança adicional ao cliente.</p>
+    `
+  },
+  {
+    id: "devolucao-recolhimento-equipamentos-at",
+    updatedAt: "2026-09-09",
+    title: "Devolução e Recolhimento de Equipamentos (Assistência Técnica)",
+    category: "Assistência Técnica",
+    keywords: ["devolucao de equipamento assistencia","devolução de equipamento assistência","recolhimento assistencia tecnica",
+      "recolhimento assistência técnica","formulario de devolucao","formulário de devolução","formulario de recolhimento",
+      "formulário de recolhimento","ficha de recolhimento assistencia","nota de devolucao","nota de devolução",
+      "foto equipamento devolvido","nf retorno assistencia"],
+    simple: "Resumindo: preencha o Formulário de Devolução (e o de Recolhimento também, se o cliente tiver contrato de locação ativo), com foto dos equipamentos anexada. Imprima a NF de retorno e a ficha de recolhimento (essa você pega no Portal de Vendas → Central de Vendas → Recolhimento) pra colher assinatura. O Setor Administrativo manda a nota de devolução no seu privado.",
+    html: `
+      <h3>Devolução e Recolhimento de Equipamentos</h3>
+      <ul>
+        <li><b>Formulário de Devolução:</b> preencher sempre que o equipamento retornar da assistência técnica.</li>
+        <li><b>Formulário de Recolhimento:</b> preencher também, caso o cliente possua contrato de locação ativo.</li>
+        <li><b>Foto dos equipamentos:</b> fotografar o equipamento a ser devolvido e o equipamento a ser recolhido — as fotos devem ser anexadas aos formulários.</li>
+        <li><b>Impressão dos documentos:</b> imprimir para coleta de assinatura a NF de retorno do equipamento da assistência técnica e a ficha de recolhimento.</li>
+        <li><b>Ficha de Recolhimento:</b> é impressa pelo Portal de Vendas → Central de Vendas → Recolhimento.</li>
+        <li><b>Nota de Devolução:</b> o Setor Administrativo envia no privado (WhatsApp) ao representante a nota de devolução do equipamento do cliente.</li>
+      </ul>
+      <h3>O que o cliente assina no final</h3>
+      <p>NF de retorno da assistência e o recolhimento (se houver contrato). Todos os documentos devem ser inseridos no grupo de digitalização e anexados no Sankhya em seus respectivos portais.</p>
+    `
+  },
+  {
+    id: "contatos-links-assistencia-tecnica",
+    updatedAt: "2026-09-09",
+    title: "Assistência Técnica — Contatos e Links Úteis",
+    category: "Assistência Técnica",
+    keywords: ["whatsapp assistencia tecnica","whatsapp at","portal arkmeds","link arkmeds","acessar arkmeds",
+      "onde acessar arkmeds","central de ajuda at",
+      "formulario solicitacoes comerciais","formulário solicitações comerciais","formulario cadastro previo",
+      "formulário cadastro prévio","contato assistencia tecnica","telefone assistencia tecnica"],
+    simple: "Resumindo: WhatsApp da AT é (21) 97527-0304. O Portal Arkmeds é onde se abre e acompanha os chamados. Tem também o formulário de Solicitações Comerciais, o de Cadastro Prévio de Clientes, e uma Central de Ajuda AT com mais informações — todos com link direto aqui embaixo.",
+    html: `
+      <h3>Contatos e Links Úteis — Assistência Técnica</h3>
+      <ul>
+        <li><b>WhatsApp AT:</b> <a href="https://wa.me/5521975270304" target="_blank">(21) 97527-0304</a></li>
+        <li><b>Portal Arkmeds:</b> acesse para abertura e acompanhamento de chamados — <a href="https://oxigenar.arkmeds.com/" target="_blank">Acessar Arkmeds</a></li>
+        <li><b>Solicitações Comerciais:</b> formulário para abertura/recolhimento de solicitações de assistência técnica — <a href="https://docs.google.com/forms/d/e/1FAIpQLScqAEvJLh-Fealg1xID5ZIoWAsNPFKLcPK7ANhSqm2tfE6_ZQ/viewform" target="_blank">Abrir Formulário</a></li>
+        <li><b>Cadastro Prévio de Clientes:</b> formulário de cadastro de clientes e equipamentos para envio à AT — <a href="https://docs.google.com/forms/d/e/1FAIpQLSdd5uYaqM0YBF59AWLx84RgHVdYjSZBt-gmkd-kBNyhBNfJFQ/viewform" target="_blank">Abrir Formulário</a></li>
+        <li><b>Central de Ajuda AT:</b> <a href="https://sites.google.com/oxigenar.com.br/astajuda/p%C3%A1gina-inicial" target="_blank">Acessar Central de Ajuda AT</a></li>
+      </ul>
+    `
+  },
+  {
+    id: "documentos-checklists-assistencia-tecnica",
+    updatedAt: "2026-09-09",
+    title: "Assistência Técnica — Documentos e Check-lists",
+    category: "Assistência Técnica",
+    keywords: ["formulario de higienizacao assistencia","formulário de higienização assistência","checklist manutencao corretiva",
+      "check-list manutenção corretiva","checklist retorno de locacao","check-list retorno de locação",
+      "documentos assistencia tecnica","pasta de documentos assistencia"],
+    simple: "Resumindo: os check-lists de Higienização, Manutenção Corretiva e Retorno de Locação ficam todos numa mesma pasta compartilhada do Google Drive — é só acessar o link e pegar o documento certo.",
+    html: `
+      <h3>Documentos e Check-lists — Assistência Técnica</h3>
+      <ul>
+        <li><b>Formulário de Higienização:</b> <a href="https://drive.google.com/drive/u/0/folders/1Yw5sBMA0idw-05K6YRHwtwjeSGknhuKN" target="_blank">Acessar Documento</a></li>
+        <li><b>Manutenção Corretiva:</b> <a href="https://drive.google.com/drive/u/0/folders/1Yw5sBMA0idw-05K6YRHwtwjeSGknhuKN" target="_blank">Acessar Documento</a></li>
+        <li><b>Retorno de Locação:</b> <a href="https://drive.google.com/drive/u/0/folders/1Yw5sBMA0idw-05K6YRHwtwjeSGknhuKN" target="_blank">Acessar Documento</a></li>
+      </ul>
+      <div class="note">Os três check-lists ficam na mesma pasta compartilhada do Google Drive.</div>
     `
   }
 ];
@@ -2026,9 +2116,8 @@ function matchesAny(qNorm, list){
 function scoreEntry(entry, queryNorm){
   const queryWords = queryNorm.split(" ").filter(Boolean);
   let score = 0;
-  for(const kw of entry.keywords){
-    const kwNorm = normalize(kw);
-    if(!kwNorm) continue;
+  const kwNormSet = new Set(entry.keywords.map(kw => normalize(kw)).filter(Boolean));
+  for(const kwNorm of kwNormSet){
     if(queryNorm.includes(kwNorm)){
       score += kwNorm.split(" ").length * 3;
     } else {
