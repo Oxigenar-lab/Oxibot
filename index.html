@@ -539,7 +539,7 @@ const DOC_NOTE = 'Colete a assinatura do cliente, digitalize o documento, envie 
 
 // Data da última atualização de conteúdo na base — ajuste manualmente sempre
 // que editar, adicionar ou corrigir alguma solicitação do KNOWLEDGE_BASE.
-const OXIBOT_LAST_UPDATED = "09/09/2026";
+const OXIBOT_LAST_UPDATED = "29/10/2026";
 
 const KNOWLEDGE_BASE = [
   {
@@ -1435,6 +1435,60 @@ const KNOWLEDGE_BASE = [
     `
   },
 
+  {
+    id: "gerador-recibo-vale-refeicao",
+    updatedAt: "2026-10-29",
+    title: "Gerador de Recibo de Vale-Refeição (PDF)",
+    category: "RH",
+    keywords: ["vale refeicao","vale refeição","vale-refeição","vale-refeicao","recibo de vale refeicao","recibo de vale refeição","recibo vr","gerar recibo vr",
+      "calcular vale refeicao","calcular vale refeição","recibo em pdf","dias uteis vale refeicao",
+      "dias úteis vale refeição","assinar recibo","assinatura no pdf","assinatura digital recibo",
+      "recibo oxigenar","recibo pulmonair","recibo vale refeicao oxigenar","recibo vale refeição oxigenar","recibo vale refeicao pulmonair","recibo vale refeição pulmonair"],
+    simple: "Resumindo: escolha a empresa (Oxigenar ou Pulmonair), preencha nome, CPF, mês de referência, dias úteis trabalhados e o valor diário do vale-refeição — o valor total é calculado sozinho (dias úteis × valor diário) e já sai por extenso. Dá pra assinar com o dedo/mouse direto na tela, e a assinatura já sai dentro do PDF, já no papel timbrado certo da empresa escolhida.",
+    html: `
+      <h3>Gerador de Recibo de Vale-Refeição</h3>
+      <p>Escolha a empresa, preencha os dados abaixo — o valor total é calculado automaticamente (dias úteis × valor diário) e já sai por extenso no recibo. Assine no campo indicado e, ao clicar em Gerar, o PDF é baixado já assinado, no papel timbrado certo (Oxigenar ou Pulmonair).</p>
+      <div class="mini-calc">
+        <label>Empresa
+          <select class="vt-empresa" onchange="atualizarCidadeVT(this)">
+            <option value="oxigenar">Oxigenar</option>
+            <option value="pulmonair">Pulmonair</option>
+          </select>
+        </label>
+        <label>Nome completo do funcionário *
+          <input type="text" class="vt-nome" placeholder="Ex: João da Silva" required oninput="this.classList.remove('campo-invalido')">
+        </label>
+        <label>CPF do funcionário *
+          <input type="text" class="vt-cpf" placeholder="Ex: 691.017.937-48" required oninput="this.classList.remove('campo-invalido')">
+        </label>
+        <label>Mês de referência (do vale-refeição) *
+          <input type="month" class="vt-mes" required oninput="this.classList.remove('campo-invalido')">
+        </label>
+        <label>Quantos dias úteis o funcionário trabalhou no mês? *
+          <input type="number" class="vt-dias" min="1" placeholder="Ex: 25" required oninput="this.classList.remove('campo-invalido')">
+        </label>
+        <label>Valor diário do vale-refeição (R$) *
+          <input type="text" class="vt-valor" placeholder="Ex: 25,00" required oninput="this.classList.remove('campo-invalido')">
+        </label>
+        <label>Cidade
+          <input type="text" class="vt-cidade" value="Volta Redonda">
+        </label>
+        <label>Data do recibo (assinatura) *
+          <input type="date" class="vt-data-recibo" required oninput="this.classList.remove('campo-invalido')">
+        </label>
+        <label>Assinatura (desenhe com o mouse ou o dedo) *
+          <canvas class="vt-assinatura" width="500" height="150"
+            onmousedown="assinaturaStart(event, this)" onmousemove="assinaturaMove(event, this)"
+            onmouseup="assinaturaEnd(this)" onmouseleave="assinaturaEnd(this)"
+            ontouchstart="assinaturaStart(event, this)" ontouchmove="assinaturaMove(event, this)"
+            ontouchend="assinaturaEnd(this)"></canvas>
+        </label>
+        <button type="button" class="calc-btn calc-btn-secondary" onclick="limparAssinatura(this)">Limpar assinatura</button>
+        <button type="button" class="calc-btn" onclick="gerarReciboVR(this)">Gerar Recibo em PDF</button>
+      </div>
+    `
+  },
+
   /* ===================== PRODUTOS E FORNECEDORES ===================== */
   {
     id: "white-martins-oxigenar",
@@ -2023,6 +2077,130 @@ function gerarReciboVT(btn){
     <ul>
       <li>Dias úteis trabalhados: <b>${dias}</b></li>
       <li>Valor diário gasto com transporte: <b>${formatarMoeda(valorDiario)}</b></li>
+    </ul>
+    <div class="note"><b>Valor total = ${formatarMoeda(valorTotal)}</b> (${valorExtenso})</div>
+    ${window.jspdf ? `<div class="note">O PDF do recibo (já assinado) foi baixado automaticamente, no papel timbrado da ${empresaKey === "oxigenar" ? "Oxigenar" : "Pulmonair"} — confira sua pasta de downloads.</div>` : ''}
+  `);
+}
+
+function gerarReciboVR(btn){
+  const wrap = btn.closest(".mini-calc");
+  const empresaKey = wrap.querySelector(".vt-empresa").value;
+  const empresa = EMPRESAS_VT[empresaKey];
+  const campoNome = wrap.querySelector(".vt-nome");
+  const campoCpf = wrap.querySelector(".vt-cpf");
+  const campoMes = wrap.querySelector(".vt-mes");
+  const campoDias = wrap.querySelector(".vt-dias");
+  const campoValor = wrap.querySelector(".vt-valor");
+  const campoData = wrap.querySelector(".vt-data-recibo");
+  const canvasAssinatura = wrap.querySelector(".vt-assinatura");
+
+  const nome = campoNome.value.trim();
+  const cpf = campoCpf.value.trim();
+  const mesStr = campoMes.value;
+  const dias = parseInt(campoDias.value, 10);
+  const valorDiario = parseValorMonetario(campoValor.value || "");
+  const cidade = wrap.querySelector(".vt-cidade").value.trim() || empresa.cidadePadrao;
+  const dataReciboStr = campoData.value;
+  const temAssinatura = canvasAssinatura.dataset.hasSignature === "1";
+
+  let erroEl = wrap.querySelector(".calc-error");
+  if(erroEl) erroEl.remove();
+  wrap.querySelectorAll(".campo-invalido").forEach(el => el.classList.remove("campo-invalido"));
+
+  function mostrarErro(msg, campoInvalido){
+    const e = document.createElement("div");
+    e.className = "calc-error";
+    e.textContent = msg;
+    wrap.appendChild(e);
+    if(campoInvalido){
+      campoInvalido.classList.add("campo-invalido");
+      campoInvalido.focus({ preventScroll: false });
+      if(campoInvalido.scrollIntoView) campoInvalido.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }
+
+  if(!nome){ mostrarErro("Informe o nome completo do funcionário.", campoNome); return; }
+  if(!cpf){ mostrarErro("Informe o CPF do funcionário.", campoCpf); return; }
+  if(!mesStr){ mostrarErro("Informe o mês de referência.", campoMes); return; }
+  if(!dias || dias <= 0){ mostrarErro("Informe quantos dias úteis foram trabalhados.", campoDias); return; }
+  if(!valorDiario || isNaN(valorDiario) || valorDiario <= 0){ mostrarErro("Informe o valor diário do vale-refeição.", campoValor); return; }
+  if(!dataReciboStr){ mostrarErro("Informe a data do recibo.", campoData); return; }
+  if(!temAssinatura){ mostrarErro("Assine no campo de assinatura antes de gerar o recibo.", canvasAssinatura); return; }
+
+  const valorTotal = dias * valorDiario;
+  const [anoMes, mesNumStr] = mesStr.split("-");
+  const mesNome = MESES_PT[parseInt(mesNumStr, 10) - 1];
+  const valorExtenso = valorPorExtenso(valorTotal);
+  const dataFormatada = formatarDataPorExtenso(dataReciboStr);
+  const assinaturaDataUrl = canvasAssinatura.toDataURL("image/png");
+
+  if(!window.jspdf){
+    mostrarErro("Não foi possível carregar o gerador de PDF (verifique a conexão com a internet). Confira os valores calculados na mensagem abaixo.");
+  } else {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const margemDireita = 20;
+
+    // Logo + endereço, alinhados à direita (papel timbrado da empresa escolhida)
+    const imgWidth = 55, imgHeight = imgWidth / empresa.logoAspecto;
+    doc.addImage(empresa.logo, empresa.logoFormato, pageWidth - margemDireita - imgWidth, 15, imgWidth, imgHeight);
+
+    doc.setFontSize(9);
+    doc.setFont(undefined, "normal");
+    let yEndereco = 15 + imgHeight + 5;
+    doc.text(empresa.nomeCabecalho, pageWidth - margemDireita, yEndereco, { align: "right" });
+    doc.text(empresa.endereco, pageWidth - margemDireita, yEndereco + 5, { align: "right" });
+    doc.text("CNPJ: " + empresa.cnpjFormatado, pageWidth - margemDireita, yEndereco + 10, { align: "right" });
+    let linhasCabecalho = 3;
+    if(empresa.telefone){
+      doc.text("Telefone: " + empresa.telefone, pageWidth - margemDireita, yEndereco + 15, { align: "right" });
+      linhasCabecalho = 4;
+    }
+
+    // Título
+    doc.setFontSize(13);
+    doc.setFont(undefined, "bold");
+    const tituloY = yEndereco + (linhasCabecalho * 5) + 20;
+    doc.text("RECIBO", pageWidth/2, tituloY, { align: "center" });
+    const tituloWidth = doc.getTextWidth("RECIBO");
+    doc.setLineWidth(0.4);
+    doc.line(pageWidth/2 - tituloWidth/2, tituloY + 1.2, pageWidth/2 + tituloWidth/2, tituloY + 1.2);
+
+    // Corpo do texto (parágrafo justificado)
+    doc.setFontSize(11);
+    doc.setFont(undefined, "normal");
+    const texto = `Eu, ${nome}, do CPF nº ${cpf}, declaro, para os devidos fins, ter recebido ` +
+      `${formatarMoeda(valorTotal)} (${valorExtenso}) da empresa ${empresa.nomeCompleto}, inscrita no CNPJ: ` +
+      `${empresa.cnpj}, referente a vale refeição do mês de ${mesNome}.`;
+    const larguraTexto = pageWidth - 40;
+    const linhas = doc.splitTextToSize(texto, larguraTexto);
+    doc.text(linhas, 20, tituloY + 20, { align: "justify", maxWidth: larguraTexto });
+
+    // Data
+    const yData = tituloY + 20 + (linhas.length * 6) + 25;
+    doc.text(`${cidade}, ${dataFormatada}.`, pageWidth/2, yData, { align: "center" });
+
+    // Assinatura desenhada, embutida acima da linha
+    const sigWidth = 55;
+    const sigHeight = sigWidth * (canvasAssinatura.height / canvasAssinatura.width);
+    doc.addImage(assinaturaDataUrl, "PNG", 20, yData + 25 - sigHeight - 2, sigWidth, sigHeight);
+    doc.line(20, yData + 25, 20 + 90, yData + 25);
+    doc.setFontSize(9);
+    doc.text(nome, 20, yData + 30);
+
+    const nomeArquivo = "Recibo_VR_" + nome.replace(/\s+/g, "_") + "_" + mesStr + ".pdf";
+    doc.save(nomeArquivo);
+  }
+
+  addBotBubble(`
+    <span class="tag">Vale-Refeição</span>
+    <h3>Recibo — ${nome}</h3>
+    <p>${empresa.nomeCompleto} · CPF ${cpf} · Referente a vale refeição de <b>${mesNome}</b></p>
+    <ul>
+      <li>Dias úteis trabalhados: <b>${dias}</b></li>
+      <li>Valor diário do vale-refeição: <b>${formatarMoeda(valorDiario)}</b></li>
     </ul>
     <div class="note"><b>Valor total = ${formatarMoeda(valorTotal)}</b> (${valorExtenso})</div>
     ${window.jspdf ? `<div class="note">O PDF do recibo (já assinado) foi baixado automaticamente, no papel timbrado da ${empresaKey === "oxigenar" ? "Oxigenar" : "Pulmonair"} — confira sua pasta de downloads.</div>` : ''}
