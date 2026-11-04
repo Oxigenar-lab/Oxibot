@@ -539,7 +539,7 @@ const DOC_NOTE = 'Colete a assinatura do cliente, digitalize o documento, envie 
 
 // Data da última atualização de conteúdo na base — ajuste manualmente sempre
 // que editar, adicionar ou corrigir alguma solicitação do KNOWLEDGE_BASE.
-const OXIBOT_LAST_UPDATED = "29/10/2026";
+const OXIBOT_LAST_UPDATED = "04/11/2026";
 
 const KNOWLEDGE_BASE = [
   {
@@ -1143,7 +1143,7 @@ const KNOWLEDGE_BASE = [
     category: "Comunicação Interna",
     keywords: ["clube qr code","qr code do clube","clube do cpap","salvar contato do clube","contato da ana",
       "whatsapp do clube","escanear qr code cliente","seja bem vindo ao clube","poster clube cpap",
-      "cartaz clube do cpap"],
+      "cartaz clube do cpap","club","ana"],
     simple: "Resumindo: todo Clube fechado, mostre esse cartaz oficial (\"Seja Bem Vindo ao Clube do CPAP!\") pro cliente escanear o QR Code — ele abre o WhatsApp já com uma mensagem pronta (\"Olá, tudo bem? Agora faço parte do clube!\") direto pro número oficial da Ana. Envie esse mesmo contato também pros clientes que já são do Clube.",
     html: `
       <h3>Clube do CPAP — QR Code Oficial de Boas-Vindas</h3>
@@ -1160,6 +1160,35 @@ const KNOWLEDGE_BASE = [
       </div>
       <div class="note">Envie esse contato também para todos os clientes já ativos do Clube, orientando que salvem o número da Ana e iniciem uma conversa com ela. Como ela atende muitas pessoas diariamente, isso ajuda a evitar restrições na conta do WhatsApp e mantém a comunicação estável com os clientes.</div>
       <p>Assim que aplicar essa orientação com os clientes, confirme a conclusão no grupo.</p>
+    `
+  },
+  {
+    id: "sobre-o-oxibot",
+    updatedAt: "2026-11-04",
+    title: "O que é o Oxibot?",
+    category: "Comunicação Interna",
+    keywords: ["o que voce sabe oxibot","o que você sabe oxibot","o que voce sabe","quem e voce","quem é você",
+      "o que e o oxibot","o que é o oxibot","sobre o oxibot","quais assuntos voce sabe","quais assuntos você sabe",
+      "o que voce faz","o que você faz"],
+    simple: "Resumindo: o Oxibot reúne as informações do dia a dia do representante — solicitações e documentos, estoque e sistema, financeiro, comunicação interna, RH, produtos/fornecedores e assistência técnica. É só perguntar com suas palavras.",
+    html: `
+      <h3>O que é o Oxibot?</h3>
+      <p>Eu reúno em um só lugar as informações do dia a dia do representante Oxigenar/Pulmonair: solicitações e documentos, estoque e sistema, financeiro, comunicação interna, RH, produtos/fornecedores e assistência técnica.</p>
+      <p>É só digitar sua dúvida com suas próprias palavras — pode ser bem resumido — que eu busco o tema mais parecido. Se eu não encontrar de primeira, você pode reformular ou usar o botão <strong>"Sugerir um tema novo"</strong> pra pedir que esse assunto seja incluído.</p>
+    `
+  },
+  {
+    id: "como-sugerir-um-tema",
+    updatedAt: "2026-11-04",
+    title: "Como sugerir um novo tema",
+    category: "Comunicação Interna",
+    keywords: ["como sugerir algo por aqui","como sugerir algo","como sugerir um tema","sugerir tema novo",
+      "sugerir assunto","pedir tema novo","faltou um tema","nao tem esse assunto","não tem esse assunto"],
+    simple: "Resumindo: clique no botão \"Sugerir um tema novo\", no canto inferior esquerdo da tela, e descreva o que você gostaria de ver no Oxibot. Se preferir, pode falar direto com a Pollyanna pelo WhatsApp (55 24 99203-7255).",
+    html: `
+      <h3>Como sugerir um novo tema</h3>
+      <p>Você pode sugerir um novo assunto ou melhoria direto por aqui: é só clicar no botão <strong>"Sugerir um tema novo"</strong> (no canto inferior esquerdo da tela) e descrever o que você gostaria de ver no Oxibot.</p>
+      <p>Se preferir, pode falar direto com a Pollyanna pelo WhatsApp: <strong>55 24 99203-7255</strong>.</p>
     `
   },
 
@@ -1389,7 +1418,8 @@ const KNOWLEDGE_BASE = [
     keywords: ["vale transporte","vale-transporte","recibo de vale transporte","recibo vt","gerar recibo vt",
       "quantos vales comprar","calcular vale transporte","recibo em pdf","dias uteis vale transporte",
       "dias úteis vale transporte","assinar recibo","assinatura no pdf","assinatura digital recibo",
-      "recibo oxigenar","recibo pulmonair","recibo vale transporte oxigenar","recibo vale transporte pulmonair"],
+      "recibo oxigenar","recibo pulmonair","recibo vale transporte oxigenar","recibo vale transporte pulmonair",
+      "vt","gerar meu vt","emitir vt","fazer vt","meu vt"],
     simple: "Resumindo: escolha a empresa (Oxigenar ou Pulmonair), preencha nome, CPF, mês de referência, dias úteis trabalhados e o valor diário gasto com transporte — o valor total é calculado sozinho (dias úteis × valor diário) e já sai por extenso. Dá pra assinar com o dedo/mouse direto na tela, e a assinatura já sai dentro do PDF, já no papel timbrado certo da empresa escolhida.",
     html: `
       <h3>Gerador de Recibo de Vale-Transporte</h3>
@@ -1443,7 +1473,8 @@ const KNOWLEDGE_BASE = [
     keywords: ["vale refeicao","vale refeição","vale-refeição","vale-refeicao","recibo de vale refeicao","recibo de vale refeição","recibo vr","gerar recibo vr",
       "calcular vale refeicao","calcular vale refeição","recibo em pdf","dias uteis vale refeicao",
       "dias úteis vale refeição","assinar recibo","assinatura no pdf","assinatura digital recibo",
-      "recibo oxigenar","recibo pulmonair","recibo vale refeicao oxigenar","recibo vale refeição oxigenar","recibo vale refeicao pulmonair","recibo vale refeição pulmonair"],
+      "recibo oxigenar","recibo pulmonair","recibo vale refeicao oxigenar","recibo vale refeição oxigenar","recibo vale refeicao pulmonair","recibo vale refeição pulmonair",
+      "vr","gerar meu vr","emitir vr","fazer vr","meu vr"],
     simple: "Resumindo: escolha a empresa (Oxigenar ou Pulmonair), preencha nome, CPF, mês de referência, dias úteis trabalhados e o valor diário do vale-refeição — o valor total é calculado sozinho (dias úteis × valor diário) e já sai por extenso. Dá pra assinar com o dedo/mouse direto na tela, e a assinatura já sai dentro do PDF, já no papel timbrado certo da empresa escolhida.",
     html: `
       <h3>Gerador de Recibo de Vale-Refeição</h3>
@@ -2268,6 +2299,15 @@ const GREETING_REPLIES = [
   "Olá! Fico por aqui pra ajudar com as solicitações do dia a dia. Pode perguntar à vontade.",
   "Oi, tudo bem? Me conta qual solicitação você está fazendo que eu te explico os documentos e o passo a passo."
 ];
+const BOM_DIA_REPLIES = [
+  "Bom dia! ☀️ Eu sou o Oxibot, pode perguntar sobre documentos e passo a passo de qualquer solicitação — locação, venda, recolhimento, higienização e outras."
+];
+const BOA_TARDE_REPLIES = [
+  "Boa tarde! 👋 Fico por aqui pra ajudar com as solicitações do dia a dia. Pode perguntar à vontade."
+];
+const BOA_NOITE_REPLIES = [
+  "Boa noite! 🌙 Ainda trabalhando? Haha, pode perguntar o que precisar que eu te ajudo."
+];
 const THANKS_REPLIES = [
   "Disponha! Qualquer outra dúvida, é só chamar.",
   "Fico feliz em ajudar! Se precisar de mais alguma coisa, estou por aqui.",
@@ -2301,6 +2341,23 @@ function matchesAny(qNorm, list){
   return list.some(p => qNorm.includes(normalize(p)));
 }
 
+/* ---------- Detecção de valor diário em pedidos de VT/VR ---------- */
+function extractMoneyFromQuery(text){
+  const match = text.match(/(\d{1,4}[.,]\d{1,2})/);
+  if(!match) return null;
+  return match[1].replace(".", ",");
+}
+function preencherValorDiarioDetectado(valor){
+  const bubbles = messagesEl.querySelectorAll(".bubble");
+  if(!bubbles.length) return;
+  const lastBubble = bubbles[bubbles.length - 1];
+  const campo = lastBubble.querySelector(".vt-valor");
+  if(!campo) return;
+  campo.value = valor;
+  campo.classList.remove("campo-invalido");
+  addBotBubble(`Já preenchi o campo <strong>"valor diário"</strong> com R$ ${valor}, que você mencionou. Agora é só completar nome, CPF, mês de referência, dias úteis trabalhados e assinar — o PDF sai certinho, já com o cálculo e a assinatura dentro, no papel timbrado da empresa escolhida.`);
+}
+
 /* ---------- Tolerância a erros de digitação (distância de edição) ---------- */
 function levenshtein(a, b){
   if(a === b) return 0;
@@ -2331,7 +2388,9 @@ function scoreEntry(entry, queryNorm){
   let score = 0;
   const kwNormSet = new Set(entry.keywords.map(kw => normalize(kw)).filter(Boolean));
   for(const kwNorm of kwNormSet){
-    if(queryNorm.includes(kwNorm)){
+    if(kwNorm === queryNorm){
+      score += Math.max(10, kwNorm.split(" ").length * 3);
+    } else if(queryNorm.includes(kwNorm)){
       score += kwNorm.split(" ").length * 3;
     } else {
       const words = kwNorm.split(" ");
@@ -2583,7 +2642,12 @@ function addBotBubble(innerHtml, kind, feedbackMeta){
   scrollDown();
 }
 
-function greetingReply(){ addBotBubble(pick(GREETING_REPLIES)); }
+function greetingReply(qNorm){
+  if(qNorm && qNorm.includes(normalize("bom dia"))){ addBotBubble(pick(BOM_DIA_REPLIES)); return; }
+  if(qNorm && qNorm.includes(normalize("boa tarde"))){ addBotBubble(pick(BOA_TARDE_REPLIES)); return; }
+  if(qNorm && qNorm.includes(normalize("boa noite"))){ addBotBubble(pick(BOA_NOITE_REPLIES)); return; }
+  addBotBubble(pick(GREETING_REPLIES));
+}
 function thanksReply(){ addBotBubble(pick(THANKS_REPLIES)); }
 function onlyThisReply(){ addBotBubble(pick(ONLY_THIS_REPLIES)); }
 
@@ -2672,7 +2736,7 @@ function ask(query){
 
   setTimeout(()=>{
     typingRow.remove();
-    if(matchesAny(qNorm, GREETING_PATTERNS) && qNorm.split(" ").length <= 4){ greetingReply(); return; }
+    if(matchesAny(qNorm, GREETING_PATTERNS) && qNorm.split(" ").length <= 4){ greetingReply(qNorm); return; }
     if(matchesAny(qNorm, THANKS_PATTERNS)){ thanksReply(); return; }
     if(matchesAny(qNorm, ONLY_THIS_PATTERNS) && qNorm.split(" ").length <= 5){ onlyThisReply(); return; }
     if(matchesAny(qNorm, CONFUSION_PATTERNS)){ confusionReply(); return; }
@@ -2695,6 +2759,10 @@ function ask(query){
       const badge = isRecentlyUpdated(top.entry) ? '<span class="updated-badge">novo</span>' : '';
       addBotBubble(badge + top.entry.html, null, { pergunta: query, tema: top.entry.title });
       sendToSheet({ type: "busca", pergunta: query, encontrado: true, tema: top.entry.title });
+      if(top.entry.id === "gerador-recibo-vale-transporte" || top.entry.id === "gerador-recibo-vale-refeicao"){
+        const valorDetectado = extractMoneyFromQuery(query);
+        if(valorDetectado) preencherValorDiarioDetectado(valorDetectado);
+      }
     } else if(top.score >= 1){
       setActiveTopic(null);
       const minRelevant = Math.max(1, top.score * 0.4);
